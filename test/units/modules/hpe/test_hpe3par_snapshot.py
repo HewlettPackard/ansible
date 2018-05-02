@@ -1,18 +1,18 @@
 # (C) Copyright 2018 Hewlett Packard Enterprise Development LP
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of version 3 of the GNU General Public License as
 # published by the Free Software Foundation.  Alternatively, at your
 # choice, you may also redistribute it and/or modify it under the terms
 # of the Apache License, version 2.0, available at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 # or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 # for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <https://www.gnu.org/licenses/>
 
@@ -318,14 +318,14 @@ class TestHpe3parSnapshot(unittest.TestCase):
                 changed=True, msg="Restored online snapshot test_snapshot successfully.")
         # AnsibleModule.fail_json should not be called
         self.assertEqual(instance.fail_json.call_count, 0)
-        
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_snapshot.client.HPE3ParClient')
-    def test_create_snapshot(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.volumeExists.return_value = False
-        mock_HPE3ParClient.createSnapshot.return_value = None
-        mock_HPE3ParClient.logout.return_value = None       
-        self.assertEqual(hpe3par_snapshot.create_snapshot(mock_HPE3ParClient,
+
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_snapshot.client')
+    def test_create_snapshot(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.volumeExists.return_value = False
+        mock_client.HPE3ParClient.createSnapshot.return_value = None
+        mock_client.HPE3ParClient.logout.return_value = None
+        self.assertEqual(hpe3par_snapshot.create_snapshot(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_snapshot',
@@ -336,9 +336,9 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'Hours',
                             'Days'
                         ), (True, True, "Created Snapshot %s successfully." % 'test_snapshot', {}))
-                        
-        mock_HPE3ParClient.volumeExists.return_value = True
-        self.assertEqual(hpe3par_snapshot.create_snapshot(mock_HPE3ParClient,
+
+        mock_client.HPE3ParClient.volumeExists.return_value = True
+        self.assertEqual(hpe3par_snapshot.create_snapshot(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_snapshot',
@@ -350,7 +350,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'Days'
                         ), (True, False, "Volume/Snapshot already present", {}))
 
-        self.assertEqual(hpe3par_snapshot.create_snapshot(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_snapshot.create_snapshot(mock_client.HPE3ParClient,
                             'USER',
                             None,
                             'test_snapshot',
@@ -362,7 +362,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'Days'
                         ), (False, False, "Snapshot create failed. Storage system username or password is null", {}))
 
-        self.assertEqual(hpe3par_snapshot.create_snapshot(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_snapshot.create_snapshot(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None,
@@ -374,7 +374,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'Days'
                         ), (False, False, "Snapshot create failed. Snapshot name is null", {}))
 
-        self.assertEqual(hpe3par_snapshot.create_snapshot(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_snapshot.create_snapshot(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_snapshot',
@@ -386,12 +386,12 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'Days'
                         ), (False, False, "Snapshot create failed. Base volume name is null", {}))
 
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_snapshot.client.HPE3ParClient')
-    def test_modify_snapshot(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.modifyVolume.return_value = None
-        mock_HPE3ParClient.logout.return_value = None
-        self.assertEqual(hpe3par_snapshot.modify_snapshot(mock_HPE3ParClient,
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_snapshot.client')
+    def test_modify_snapshot(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.modifyVolume.return_value = None
+        mock_client.HPE3ParClient.logout.return_value = None
+        self.assertEqual(hpe3par_snapshot.modify_snapshot(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_snapshot',
@@ -400,8 +400,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             10,
                             True
                         ), (True, True, "Modified Snapshot %s successfully." % 'test_snapshot', {}))
-                        
-        self.assertEqual(hpe3par_snapshot.modify_snapshot(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_snapshot.modify_snapshot(mock_client.HPE3ParClient,
                             'USER',
                             None,
                             'test_snapshot',
@@ -411,7 +411,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             True
                         ), (False, False, "Modify snapshot failed. Storage system username or password is null", {}))
 
-        self.assertEqual(hpe3par_snapshot.modify_snapshot(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_snapshot.modify_snapshot(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None,
@@ -421,43 +421,43 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             True
                         ), (False, False, "Modify snapshot failed. Snapshot name is null", {}))
 
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_snapshot.client.HPE3ParClient')
-    def test_delete_snapshot(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.volumeExists.return_value = True
-        mock_HPE3ParClient.deleteVolume.return_value = None
-        mock_HPE3ParClient.logout.return_value = None
-        self.assertEqual(hpe3par_snapshot.delete_snapshot(mock_HPE3ParClient,
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_snapshot.client')
+    def test_delete_snapshot(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.volumeExists.return_value = True
+        mock_client.HPE3ParClient.deleteVolume.return_value = None
+        mock_client.HPE3ParClient.logout.return_value = None
+        self.assertEqual(hpe3par_snapshot.delete_snapshot(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_snapshot'
                         ), (True, True, "Deleted Snapshot %s successfully." % 'test_snapshot', {}))
-                        
-        mock_HPE3ParClient.volumeExists.return_value = False
-        self.assertEqual(hpe3par_snapshot.delete_snapshot(mock_HPE3ParClient,
+
+        mock_client.HPE3ParClient.volumeExists.return_value = False
+        self.assertEqual(hpe3par_snapshot.delete_snapshot(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_snapshot'
                         ), (True, False, "Volume/Snapshot does not exist", {}))
 
-        self.assertEqual(hpe3par_snapshot.delete_snapshot(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_snapshot.delete_snapshot(mock_client.HPE3ParClient,
                             'USER',
                             None,
                             'test_snapshot'
                         ), (False, False, "Snapshot delete failed. Storage system username or password is null", {}))
 
-        self.assertEqual(hpe3par_snapshot.delete_snapshot(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_snapshot.delete_snapshot(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None
                         ), (False, False, "Snapshot delete failed. Snapshot name is null", {}))
-                        
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_snapshot.client.HPE3ParClient')
-    def test_restore_snapshot_offline(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.promoteVirtualCopy.return_value = None
-        mock_HPE3ParClient.logout.return_value = None
-        self.assertEqual(hpe3par_snapshot.restore_snapshot_offline(mock_HPE3ParClient,
+
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_snapshot.client')
+    def test_restore_snapshot_offline(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.promoteVirtualCopy.return_value = None
+        mock_client.HPE3ParClient.logout.return_value = None
+        self.assertEqual(hpe3par_snapshot.restore_snapshot_offline(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_snapshot',
@@ -465,7 +465,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             False
                         ), (True, True, "Restored offline snapshot %s successfully." % 'test_snapshot', {}))
 
-        self.assertEqual(hpe3par_snapshot.restore_snapshot_offline(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_snapshot.restore_snapshot_offline(mock_client.HPE3ParClient,
                             None,
                             'PASS',
                             'test_snapshot',
@@ -473,39 +473,39 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             False
                         ), (False, False, "Offline snapshot restore failed. Storage system username or password is null", {}))
 
-        self.assertEqual(hpe3par_snapshot.restore_snapshot_offline(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_snapshot.restore_snapshot_offline(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None,
                             'MEDIUM',
                             False
                         ), (False, False, "Offline snapshot restore failed. Snapshot name is null", {}))
-                        
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_snapshot.client.HPE3ParClient')
-    def test_restore_snapshot_online(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.promoteVirtualCopy.return_value = None
-        mock_HPE3ParClient.logout.return_value = None
-        self.assertEqual(hpe3par_snapshot.restore_snapshot_online(mock_HPE3ParClient,
+
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_snapshot.client')
+    def test_restore_snapshot_online(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.promoteVirtualCopy.return_value = None
+        mock_client.HPE3ParClient.logout.return_value = None
+        self.assertEqual(hpe3par_snapshot.restore_snapshot_online(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_snapshot',
                             False
                         ), (True, True, "Restored online Snapshot %s successfully." % 'test_snapshot', {}))
 
-        self.assertEqual(hpe3par_snapshot.restore_snapshot_online(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_snapshot.restore_snapshot_online(mock_client.HPE3ParClient,
                             None,
                             'PASS',
                             'test_snapshot',
                             False
                         ), (False, False, "Online snapshot restore failed. Storage system username or password is null", {}))
 
-        self.assertEqual(hpe3par_snapshot.restore_snapshot_online(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_snapshot.restore_snapshot_online(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None,
                             False
                         ), (False, False, "Online snapshot restore failed. Snapshot name is null", {}))
-                        
+
 if __name__ == '__main__':
     unittest.main(exit=False)

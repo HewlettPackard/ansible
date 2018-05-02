@@ -1,18 +1,18 @@
 # (C) Copyright 2018 Hewlett Packard Enterprise Development LP
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of version 3 of the GNU General Public License as
 # published by the Free Software Foundation.  Alternatively, at your
 # choice, you may also redistribute it and/or modify it under the terms
 # of the Apache License, version 2.0, available at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 # or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 # for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <https://www.gnu.org/licenses/>
 
@@ -21,7 +21,7 @@ import unittest
 from ansible.modules.storage.hpe import hpe3par_volume
 from ansible.module_utils.basic import AnsibleModule
 
-class TestHpe3parSnapshot(unittest.TestCase):
+class TestHpe3parVolume(unittest.TestCase):
 
     fields = {
         "state": {
@@ -137,7 +137,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
             "type": "str",
         }
     }
-    
+
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.AnsibleModule')
     def test_module_args(self, mock_module, mock_client):
@@ -224,7 +224,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                 changed=True, msg="Deleted volume successfully.")
         # AnsibleModule.fail_json should not be called
         self.assertEqual(instance.fail_json.call_count, 0)
-        
+
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.AnsibleModule')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.modify_volume')
@@ -271,7 +271,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                 changed=True, msg="Modified volume successfully.")
         # AnsibleModule.fail_json should not be called
         self.assertEqual(instance.fail_json.call_count, 0)
-        
+
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.AnsibleModule')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.grow')
@@ -318,7 +318,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                 changed=True, msg="Volume grown successfully.")
         # AnsibleModule.fail_json should not be called
         self.assertEqual(instance.fail_json.call_count, 0)
-        
+
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.AnsibleModule')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.grow_to_size')
@@ -365,7 +365,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                 changed=True, msg="Volume grown to size successfully.")
         # AnsibleModule.fail_json should not be called
         self.assertEqual(instance.fail_json.call_count, 0)
-        
+
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.AnsibleModule')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.change_snap_cpg')
@@ -412,7 +412,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                 changed=True, msg="Changed snap CPG successfully.")
         # AnsibleModule.fail_json should not be called
         self.assertEqual(instance.fail_json.call_count, 0)
-        
+
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.AnsibleModule')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.change_user_cpg')
@@ -459,7 +459,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                 changed=True, msg="Changed user CPG successfully.")
         # AnsibleModule.fail_json should not be called
         self.assertEqual(instance.fail_json.call_count, 0)
-        
+
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.AnsibleModule')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.convert_type')
@@ -506,7 +506,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                 changed=True, msg="Converted type successfully.")
         # AnsibleModule.fail_json should not be called
         self.assertEqual(instance.fail_json.call_count, 0)
-        
+
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.AnsibleModule')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.modify_volume')
@@ -553,14 +553,14 @@ class TestHpe3parSnapshot(unittest.TestCase):
                 changed=True, msg="Set snap CPG successfully.")
         # AnsibleModule.fail_json should not be called
         self.assertEqual(instance.fail_json.call_count, 0)
-        
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client.HPE3ParClient')
-    def test_create_snapshot(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.volumeExists.return_value = False
-        mock_HPE3ParClient.createVolume.return_value = None
-        mock_HPE3ParClient.logout.return_value = None       
-        self.assertEqual(hpe3par_volume.create_volume(mock_HPE3ParClient,
+
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
+    def test_create_snapshot(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.volumeExists.return_value = False
+        mock_client.HPE3ParClient.createVolume.return_value = None
+        mock_client.HPE3ParClient.logout.return_value = None
+        self.assertEqual(hpe3par_volume.create_volume(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -571,9 +571,9 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             True,
                             'snap_cpg'
                         ), (True, True, "Created volume %s successfully." % 'test_volume', {}))
-                        
-        mock_HPE3ParClient.volumeExists.return_value = True
-        self.assertEqual(hpe3par_volume.create_volume(mock_HPE3ParClient,
+
+        mock_client.HPE3ParClient.volumeExists.return_value = True
+        self.assertEqual(hpe3par_volume.create_volume(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -585,7 +585,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'snap_cpg'
                         ), (True, False, "Volume already present", {}))
 
-        self.assertEqual(hpe3par_volume.create_volume(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_volume.create_volume(mock_client.HPE3ParClient,
                             'USER',
                             None,
                             'test_volume',
@@ -597,7 +597,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'snap_cpg'
                         ), (False, False, "Volume creation failed. Storage system username or password is null", {}))
 
-        self.assertEqual(hpe3par_volume.create_volume(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_volume.create_volume(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None,
@@ -609,7 +609,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'snap_cpg'
                         ), (False, False, "Volume creation failed. Volume name is null", {}))
 
-        self.assertEqual(hpe3par_volume.create_volume(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_volume.create_volume(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -620,8 +620,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             True,
                             'snap_cpg'
                         ), (False, False, "Volume creation failed. Cpg is null", {}))
-                        
-        self.assertEqual(hpe3par_volume.create_volume(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.create_volume(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -632,8 +632,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             True,
                             'snap_cpg'
                         ), (False, False, "Volume creation failed. Volume size is null", {}))
-                        
-        self.assertEqual(hpe3par_volume.create_volume(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.create_volume(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -644,52 +644,52 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             True,
                             'snap_cpg'
                         ), (False, False, "Volume creation failed. Volume size_unit is null", {}))
-                        
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client.HPE3ParClient')
-    def test_delete_snapshot(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.volumeExists.return_value = True
-        mock_HPE3ParClient.createVolume.return_value = None
-        mock_HPE3ParClient.logout.return_value = None 
-        self.assertEqual(hpe3par_volume.delete_volume(mock_HPE3ParClient,
+
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
+    def test_delete_snapshot(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.volumeExists.return_value = True
+        mock_client.HPE3ParClient.createVolume.return_value = None
+        mock_client.HPE3ParClient.logout.return_value = None
+        self.assertEqual(hpe3par_volume.delete_volume(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume'
                         ), (True, True, "Deleted volume %s successfully." % 'test_volume', {}))
-                        
-        mock_HPE3ParClient.volumeExists.return_value = False
-        self.assertEqual(hpe3par_volume.delete_volume(mock_HPE3ParClient,
+
+        mock_client.HPE3ParClient.volumeExists.return_value = False
+        self.assertEqual(hpe3par_volume.delete_volume(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume'
                         ), (True, False, "Volume does not exist", {}))
-                        
-        self.assertEqual(hpe3par_volume.delete_volume(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.delete_volume(mock_client.HPE3ParClient,
                             'USER',
                             None,
                             'test_volume'
                         ), (False, False, "Volume delete failed. Storage system username or password is null", {}))
 
-        self.assertEqual(hpe3par_volume.delete_volume(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_volume.delete_volume(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None
                         ), (False, False, "Volume delete failed. Volume name is null", {}))
 
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client.HPE3ParClient')
-    def test_grow(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.growVolume.return_value = None
-        mock_HPE3ParClient.logout.return_value = None
-        self.assertEqual(hpe3par_volume.grow(mock_HPE3ParClient,
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
+    def test_grow(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.growVolume.return_value = None
+        mock_client.HPE3ParClient.logout.return_value = None
+        self.assertEqual(hpe3par_volume.grow(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
                             2,
                             'GiB'
                         ), (True, True, "Grown volume %s by %s %s successfully." % ('test_volume', 2, 'GiB'), {}))
-                        
-        self.assertEqual(hpe3par_volume.grow(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.grow(mock_client.HPE3ParClient,
                             'USER',
                             None,
                             'test_volume',
@@ -697,15 +697,15 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'GiB'
                         ), (False, False, "Grow volume failed. Storage system username or password is null", {}))
 
-        self.assertEqual(hpe3par_volume.grow(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_volume.grow(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None,
                             2,
                             'GiB'
                         ), (False, False, "Grow volume failed. Volume name is null", {}))
-                        
-        self.assertEqual(hpe3par_volume.grow(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.grow(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -713,7 +713,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'GiB'
                         ), (False, False, "Grow volume failed. Volume size is null", {}))
 
-        self.assertEqual(hpe3par_volume.grow(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_volume.grow(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -721,24 +721,23 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             None
                         ), (False, False, "Grow volume failed. Volume size_unit is null", {}))
 
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client.HPE3ParClient')
-    def test_grow_to_size(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.volumeExists.return_value = True
-        mock_HPE3ParClient.growVolume.return_value = None
-        mock_HPE3ParClient.logout.return_value = None
-        mock_HPE3ParClient.getVolume.return_value.size_mib = 1024
-        print mock_HPE3ParClient.getVolume.return_value.size_mib
-        self.assertEqual(hpe3par_volume.grow_to_size(mock_HPE3ParClient,
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
+    def test_grow_to_size(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.volumeExists.return_value = True
+        mock_client.HPE3ParClient.growVolume.return_value = None
+        mock_client.HPE3ParClient.logout.return_value = None
+        mock_client.HPE3ParClient.getVolume.return_value.size_mib = 1024
+        self.assertEqual(hpe3par_volume.grow_to_size(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
                             2,
                             'GiB'
                         ), (True, True, "Grown volume %s to %s %s successfully." % ('test_volume', 2, 'GiB'), {}))
-                    
-        mock_HPE3ParClient.getVolume.return_value.size_mib = 2048
-        self.assertEqual(hpe3par_volume.grow_to_size(mock_HPE3ParClient,
+
+        mock_client.HPE3ParClient.getVolume.return_value.size_mib = 2048
+        self.assertEqual(hpe3par_volume.grow_to_size(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -746,17 +745,17 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'GiB'
                         ), (True, False, "Volume size already >= %s %s" % (2, 'GiB'), {}))
 
-        mock_HPE3ParClient.volumeExists.return_value = False
-        mock_HPE3ParClient.getVolume.return_value.size_mib = 1024
-        self.assertEqual(hpe3par_volume.grow_to_size(mock_HPE3ParClient,
+        mock_client.HPE3ParClient.volumeExists.return_value = False
+        mock_client.HPE3ParClient.getVolume.return_value.size_mib = 1024
+        self.assertEqual(hpe3par_volume.grow_to_size(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
                             2,
                             'GiB'
                         ), (False, False, "Volume does not exist", {}))
-                        
-        self.assertEqual(hpe3par_volume.grow_to_size(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.grow_to_size(mock_client.HPE3ParClient,
                             'USER',
                             None,
                             'test_volume',
@@ -765,15 +764,15 @@ class TestHpe3parSnapshot(unittest.TestCase):
                         ), (False, False, "Grow_to_size volume failed. Storage system username or password is null", {}))
 
 
-        self.assertEqual(hpe3par_volume.grow_to_size(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_volume.grow_to_size(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None,
                             2,
                             'GiB'
                         ), (False, False, "Grow_to_size volume failed. Volume name is null", {}))
-                        
-        self.assertEqual(hpe3par_volume.grow_to_size(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.grow_to_size(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -781,24 +780,24 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'GiB'
                         ), (False, False, "Grow_to_size volume failed. Volume size is null", {}))
 
-        self.assertEqual(hpe3par_volume.grow_to_size(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_volume.grow_to_size(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
                             2,
                             None
                         ), (False, False, "Grow_to_size volume failed. Volume size_unit is null", {}))
-                        
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client.HPE3ParClient')
-    def test_convert_type(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.volumeExists.return_value = True
-        mock_HPE3ParClient.tuneVolume.return_value.task_id = 1
-        mock_HPE3ParClient.waitForTaskToEnd.return_value = True
-        mock_HPE3ParClient.logout.return_value = None
-        mock_HPE3ParClient.getVolume.return_value.provisioning_type = 2
-        mock_HPE3ParClient.Task.return_value.task_id = 1
-        self.assertEqual(hpe3par_volume.convert_type(mock_HPE3ParClient,
+
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
+    def test_convert_type(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.volumeExists.return_value = True
+        mock_client.HPE3ParClient.tuneVolume.return_value.task_id = 1
+        mock_client.HPE3ParClient.waitForTaskToEnd.return_value = True
+        mock_client.HPE3ParClient.logout.return_value = None
+        mock_client.HPE3ParClient.getVolume.return_value.provisioning_type = 2
+        mock_client.HPE3ParClient.Task.return_value.task_id = 1
+        self.assertEqual(hpe3par_volume.convert_type(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -808,9 +807,9 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'keep_vv',
                             True
                         ), (True, True, "Provisioning type changed to %s successfully." % 'full', {}))
-                        
-        mock_HPE3ParClient.getVolume.return_value.provisioning_type = 1
-        self.assertEqual(hpe3par_volume.convert_type(mock_HPE3ParClient,
+
+        mock_client.HPE3ParClient.getVolume.return_value.provisioning_type = 1
+        self.assertEqual(hpe3par_volume.convert_type(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -820,9 +819,9 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'keep_vv',
                             True
                         ), (True, False, "Provisioning type already set to %s" % 'full', {}))
-                        
-        mock_HPE3ParClient.volumeExists.return_value = False
-        self.assertEqual(hpe3par_volume.convert_type(mock_HPE3ParClient,
+
+        mock_client.HPE3ParClient.volumeExists.return_value = False
+        self.assertEqual(hpe3par_volume.convert_type(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -833,7 +832,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             True
                         ), (False, False, "Volume does not exist", {}))
 
-        self.assertEqual(hpe3par_volume.convert_type(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_volume.convert_type(mock_client.HPE3ParClient,
                             'USER',
                             None,
                             'test_volume',
@@ -843,8 +842,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'keep_vv',
                             True
                         ), (False, False, "Convert volume type failed. Storage system username or password is null", {}))
-                        
-        self.assertEqual(hpe3par_volume.convert_type(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.convert_type(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None,
@@ -854,8 +853,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'keep_vv',
                             True
                         ), (False, False, "Convert volume type failed. Volume name is null", {}))
-                        
-        self.assertEqual(hpe3par_volume.convert_type(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.convert_type(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -865,8 +864,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'keep_vv',
                             True
                         ), (False, False, "Convert volume type failed. User CPG is null", {}))
-                        
-        self.assertEqual(hpe3par_volume.convert_type(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.convert_type(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -877,130 +876,130 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             True
                         ), (False, False, "Convert volume type failed. Volume type is null", {}))
 
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client.HPE3ParClient')
-    def test_change_snap_cpg(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.volumeExists.return_value = True
-        mock_HPE3ParClient.tuneVolume.return_value.task_id = 1
-        mock_HPE3ParClient.waitForTaskToEnd.return_value = True
-        mock_HPE3ParClient.logout.return_value = None
-        mock_HPE3ParClient.getVolume.return_value.snap_cpg = 'original_cpg'
-        mock_HPE3ParClient.Task.return_value.task_id = 1
-        self.assertEqual(hpe3par_volume.change_snap_cpg(mock_HPE3ParClient,
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
+    def test_change_snap_cpg(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.volumeExists.return_value = True
+        mock_client.HPE3ParClient.tuneVolume.return_value.task_id = 1
+        mock_client.HPE3ParClient.waitForTaskToEnd.return_value = True
+        mock_client.HPE3ParClient.logout.return_value = None
+        mock_client.HPE3ParClient.getVolume.return_value.snap_cpg = 'original_cpg'
+        mock_client.HPE3ParClient.Task.return_value.task_id = 1
+        self.assertEqual(hpe3par_volume.change_snap_cpg(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
                             'test_cpg',
                             True
                         ), (True, True, "Changed snap CPG to %s successfully." % 'test_cpg', {}))
-                        
-        mock_HPE3ParClient.getVolume.return_value.snap_cpg = 'test_cpg'
-        self.assertEqual(hpe3par_volume.change_snap_cpg(mock_HPE3ParClient,
+
+        mock_client.HPE3ParClient.getVolume.return_value.snap_cpg = 'test_cpg'
+        self.assertEqual(hpe3par_volume.change_snap_cpg(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
                             'test_cpg',
                             True
                         ), (True, False, "Snap CPG already set to %s" % 'test_cpg', {}))
-                        
-        mock_HPE3ParClient.volumeExists.return_value = False
-        self.assertEqual(hpe3par_volume.change_snap_cpg(mock_HPE3ParClient,
+
+        mock_client.HPE3ParClient.volumeExists.return_value = False
+        self.assertEqual(hpe3par_volume.change_snap_cpg(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
                             'test_cpg',
                             True
                         ), (False, False, "Volume does not exist", {}))\
-                        
-        self.assertEqual(hpe3par_volume.change_snap_cpg(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.change_snap_cpg(mock_client.HPE3ParClient,
                             'USER',
                             None,
                             'test_volume',
                             'test_cpg',
                             True
                         ), (False, False, "Change snap CPG failed. Storage system username or password is null", {}))
-                        
-        self.assertEqual(hpe3par_volume.change_snap_cpg(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.change_snap_cpg(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None,
                             'test_cpg',
                             True
                         ), (False, False, "Change snap CPG failed. Volume name is null", {}))
-                        
-        self.assertEqual(hpe3par_volume.change_snap_cpg(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.change_snap_cpg(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
                             None,
                             True
                         ), (False, False, "Change snap CPG failed. Snap CPG is null", {}))
-                        
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client.HPE3ParClient')
-    def test_change_user_cpg(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.volumeExists.return_value = True
-        mock_HPE3ParClient.tuneVolume.return_value.task_id = 1
-        mock_HPE3ParClient.waitForTaskToEnd.return_value = True
-        mock_HPE3ParClient.logout.return_value = None
-        mock_HPE3ParClient.getVolume.return_value.user_cpg = 'original_cpg'
-        mock_HPE3ParClient.Task.return_value.task_id = 1
-        self.assertEqual(hpe3par_volume.change_user_cpg(mock_HPE3ParClient,
+
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
+    def test_change_user_cpg(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.volumeExists.return_value = True
+        mock_client.HPE3ParClient.tuneVolume.return_value.task_id = 1
+        mock_client.HPE3ParClient.waitForTaskToEnd.return_value = True
+        mock_client.HPE3ParClient.logout.return_value = None
+        mock_client.HPE3ParClient.getVolume.return_value.user_cpg = 'original_cpg'
+        mock_client.HPE3ParClient.Task.return_value.task_id = 1
+        self.assertEqual(hpe3par_volume.change_user_cpg(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
                             'test_cpg',
                             True
                         ), (True, True, "Changed user CPG to %s successfully." % 'test_cpg', {}))
-                        
-        mock_HPE3ParClient.getVolume.return_value.user_cpg = 'test_cpg'
-        self.assertEqual(hpe3par_volume.change_user_cpg(mock_HPE3ParClient,
+
+        mock_client.HPE3ParClient.getVolume.return_value.user_cpg = 'test_cpg'
+        self.assertEqual(hpe3par_volume.change_user_cpg(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
                             'test_cpg',
                             True
                         ), (True, False, "user CPG already set to %s" % 'test_cpg', {}))
-                        
-        mock_HPE3ParClient.volumeExists.return_value = False
-        self.assertEqual(hpe3par_volume.change_user_cpg(mock_HPE3ParClient,
+
+        mock_client.HPE3ParClient.volumeExists.return_value = False
+        self.assertEqual(hpe3par_volume.change_user_cpg(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
                             'test_cpg',
                             True
                         ), (False, False, "Volume does not exist", {}))\
-                        
-        self.assertEqual(hpe3par_volume.change_user_cpg(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.change_user_cpg(mock_client.HPE3ParClient,
                             'USER',
                             None,
                             'test_volume',
                             'test_cpg',
                             True
                         ), (False, False, "Change user CPG failed. Storage system username or password is null", {}))
-                        
-        self.assertEqual(hpe3par_volume.change_user_cpg(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.change_user_cpg(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None,
                             'test_cpg',
                             True
                         ), (False, False, "Change user CPG failed. Volume name is null", {}))
-                        
-        self.assertEqual(hpe3par_volume.change_user_cpg(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.change_user_cpg(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
                             None,
                             True
                         ), (False, False, "Change user CPG failed. Snap CPG is null", {}))
-                        
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client.HPE3ParClient')
-    def test_modify_volume(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.modifyVolume.return_value = None
-        mock_HPE3ParClient.logout.return_value = None
-        self.assertEqual(hpe3par_volume.modify_volume(mock_HPE3ParClient,
+
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_volume.client')
+    def test_modify_volume(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.modifyVolume.return_value = None
+        mock_client.HPE3ParClient.logout.return_value = None
+        self.assertEqual(hpe3par_volume.modify_volume(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_volume',
@@ -1019,8 +1018,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'test_cpg',
                             'snap_cpg'
                         ), (True, True, "Modified Volume %s successfully." % 'test_volume', {}))
-                        
-        self.assertEqual(hpe3par_volume.modify_volume(mock_HPE3ParClient,
+
+        self.assertEqual(hpe3par_volume.modify_volume(mock_client.HPE3ParClient,
                             'USER',
                             None,
                             'test_volume',
@@ -1040,7 +1039,7 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'snap_cpg'
                         ), (False, False, "Modify volume type failed. Storage system username or password is null", {}))
 
-        self.assertEqual(hpe3par_volume.modify_volume(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_volume.modify_volume(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None,
@@ -1059,17 +1058,17 @@ class TestHpe3parSnapshot(unittest.TestCase):
                             'test_cpg',
                             'snap_cpg'
                         ), (False, False, "Modify volume type failed. Volume name is null", {}))
-                        
+
     def test_convert_to_binary_multiple(self):
         self.assertEqual(hpe3par_volume.convert_to_binary_multiple(1, 'MiB'), 1)
         self.assertEqual(hpe3par_volume.convert_to_binary_multiple(1, 'GiB'), 1024)
         self.assertEqual(hpe3par_volume.convert_to_binary_multiple(1, 'TiB'), 1024 * 1024)
-    
+
     def get_volume_type(self):
         self.assertEqual(hpe3par_volume.get_volume_type('thin'), ['TPVV', 1])
         self.assertEqual(hpe3par_volume.get_volume_type('thin_dedupe'), ['TDVV', 3])
         self.assertEqual(hpe3par_volume.get_volume_type('full'), ['FPVV', 2])
-                        
+
 if __name__ == '__main__':
     unittest.main(exit=False)
 

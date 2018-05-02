@@ -165,24 +165,22 @@ class TestHpe3parhostset(unittest.TestCase):
         result = hostset.create_hostset(mock_client,"user","pass","host",None,None)    
         self.assertEqual(result, (True, False, "Hostset already present", {}))                            
     
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client.HPE3ParClient')
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')
     def test_create_hostset_create_exception_in_login(self, mock_client):
         """
         hpe3par hostset - create a hostset
         """  
-        mock_client.login.side_effect = Exception("Failed to login!")
-        mock_client.return_value = mock_client
-        result = hostset.create_hostset(mock_client,"user","password",'hostset_name',None,None) 
+        mock_client.HPE3ParClient.login.side_effect = Exception("Failed to login!")
+        result = hostset.create_hostset(mock_client.HPE3ParClient,"user","password",'hostset_name',None,None) 
         self.assertEqual(result, (False, False, "Hostset creation failed | Failed to login!", {}))        
 
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client.HPE3ParClient')
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')
     def test_create_hostset_create_sucess_login(self, mock_client):
         """
         hpe3par flash cache - create a flash cache
         """  
-        mock_client.hostSetExists.return_value = False
-        mock_client.return_value = mock_client
-        result = hostset.create_hostset(mock_client,"user","password","hostname","domain",["member1"])
+        mock_client.HPE3ParClient.hostSetExists.return_value = False
+        result = hostset.create_hostset(mock_client.HPE3ParClient,"user","password","hostname","domain",["member1"])
         self.assertEqual(result, (True, True, "Created Hostset hostname successfully.", {}))
                
 # Delete hostset   
@@ -224,24 +222,22 @@ class TestHpe3parhostset(unittest.TestCase):
         result = hostset.delete_hostset(mock_client,"user","pass","host")    
         self.assertEqual(result, (True, False, "Hostset does not exist", {}))                            
     
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client.HPE3ParClient')
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')
     def test_delete_hostset_create_exception_in_login(self, mock_client):
         """
         hpe3par hostset - delete a hostset
         """  
-        mock_client.login.side_effect = Exception("Failed to login!")
-        mock_client.return_value = mock_client
-        result = hostset.delete_hostset(mock_client,"user","password","hostname") 
+        mock_client.HPE3ParClient.login.side_effect = Exception("Failed to login!")
+        result = hostset.delete_hostset(mock_client.HPE3ParClient,"user","password","hostname") 
         self.assertEqual(result, (False, False, "Hostset delete failed | Failed to login!", {}))        
 
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client.HPE3ParClient')
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')
     def test_delete_hostset_create_sucess_login(self, mock_client):
         """
         hpe3par flash cache - create a flash cache
         """  
-        mock_client.hostSetExists.return_value = True
-        mock_client.return_value = mock_client
-        result = hostset.delete_hostset(mock_client,"user","password","hostname")
+        mock_client.HPE3ParClient.hostSetExists.return_value = True
+        result = hostset.delete_hostset(mock_client.HPE3ParClient,"user","password","hostname")
         self.assertEqual(result, (True, True, "Deleted Hostset hostname successfully.", {}))  
         
 # Add hosts to hostset.
@@ -293,54 +289,49 @@ class TestHpe3parhostset(unittest.TestCase):
         result = hostset.add_hosts(mock_client,"user","pass","host",["members"])    
         self.assertEqual(result, (True, True, 'Added hosts successfully.', {}))                            
     
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client.HPE3ParClient')
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')
     def test_add_host_to_hostset_hostset_create_exception_in_login(self, mock_client):
         """
         hpe3par hostset - create a hostset
         """  
-        mock_client.login.side_effect = Exception("Failed to login!")
-        mock_client.return_value = mock_client
-        result = hostset.add_hosts(mock_client,"user","password","host",["members"]) 
+        mock_client.HPE3ParClient.login.side_effect = Exception("Failed to login!")
+        result = hostset.add_hosts(mock_client.HPE3ParClient,"user","password","host",["members"]) 
         self.assertEqual(result, (False, False, "Add hosts to hostset failed | Failed to login!", {}))        
 
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client.HPE3ParClient')
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')
     def test_add_host_to_hostset_hostset_doesnt_exists(self, mock_client):
         """
         hpe3par flash cache - create a flash cache
         """  
-        mock_client.hostSetExists.return_value = False
-        mock_client.return_value = mock_client
-        result = hostset.add_hosts(mock_client,"user","password","hostname",["member1"])
+        mock_client.HPE3ParClient.hostSetExists.return_value = False
+        result = hostset.add_hosts(mock_client.HPE3ParClient,"user","password","hostname",["member1"])
         self.assertEqual(result, (False, False, "Hostset does not exist", {}))
     
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client.HPE3ParClient')
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')
     def test_add_host_to_hostset_No_new_members_to_add_to_the_Host_set(self, mock_client):
         """
         hpe3par flash cache - create a flash cache
         """  
-        mock_client.getHostSet.return_value.setmembers = ["member1"]
-        mock_client.return_value = mock_client
-        result = hostset.add_hosts(mock_client,"user","password","hostname",["member1"])
+        mock_client.HPE3ParClient.getHostSet.return_value.setmembers = ["member1"]
+        result = hostset.add_hosts(mock_client.HPE3ParClient,"user","password","hostname",["member1"])
         self.assertEqual(result, (True, False, "No new members to add to the Host set hostname. Nothing to do.", {}))                     
 
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client.HPE3ParClient')
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')
     def test_add_host_to_hostset_No_new_members_to_add_to_the_Host_set_login(self, mock_client):
         """
         hpe3par flash cache - create a flash cache
         """  
-        mock_client.getHostSet.return_value.setmembers = []
-        mock_client.return_value = mock_client
-        result = hostset.add_hosts(mock_client,"user","password","hostname",["member1"])
+        mock_client.HPE3ParClient.getHostSet.return_value.setmembers = []
+        result = hostset.add_hosts(mock_client.HPE3ParClient,"user","password","hostname",["member1"])
         self.assertEqual(result, (True, True, 'Added hosts successfully.', {}))
         
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client.HPE3ParClient')
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')
     def test_add_host_to_hostset_No_new_members_to_add_to_the_Host_set_login_setmembers_none(self, mock_client):
         """
         hpe3par flash cache - create a flash cache
         """  
-        mock_client.getHostSet.return_value.setmembers = None
-        mock_client.return_value = mock_client
-        result = hostset.add_hosts(mock_client,"user","password","hostname",["member1"])
+        mock_client.HPE3ParClient.getHostSet.return_value.setmembers = None
+        result = hostset.add_hosts(mock_client.HPE3ParClient,"user","password","hostname",["member1"])
         self.assertEqual(result, (True, True, 'Added hosts successfully.', {}))        
         
 # Remove hosts from hostset.
@@ -395,44 +386,40 @@ class TestHpe3parhostset(unittest.TestCase):
         result = hostset.remove_hosts(mock_client,"user","pass","host",["members"])    
         self.assertEqual(result, (True, True, 'Removed hosts successfully.', {}))                            
     
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client.HPE3ParClient')
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')
     def test_remove_host_from_hostset_hostset_create_exception_in_login(self, mock_client):
         """
         hpe3par hostset - create a hostset
         """  
-        mock_client.login.side_effect = Exception("Failed to login!")
-        mock_client.return_value = mock_client
-        result = hostset.remove_hosts(mock_client,"user","password","host",["members"]) 
+        mock_client.HPE3ParClient.login.side_effect = Exception("Failed to login!")
+        result = hostset.remove_hosts(mock_client.HPE3ParClient,"user","password","host",["members"]) 
         self.assertEqual(result, (False, False, "Remove hosts from hostset failed | Failed to login!", {}))        
 
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client.HPE3ParClient')
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')
     def test_remove_host_from_hostset_hostset_doesnt_exists(self, mock_client):
         """
         hpe3par flash cache - create a flash cache
         """  
-        mock_client.hostSetExists.return_value = False
-        mock_client.return_value = mock_client        
-        result = hostset.remove_hosts(mock_client,"user","password","hostname",["member1"])
+        mock_client.HPE3ParClient.hostSetExists.return_value = False
+        result = hostset.remove_hosts(mock_client.HPE3ParClient,"user","password","hostname",["member1"])
         self.assertEqual(result, (True, False, "Hostset does not exist", {}))
     
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client.HPE3ParClient')
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')
     def test_remove_host_from_hostset_No_new_members_to_remove_from_the_Host_set(self, mock_client):
         """
         hpe3par flash cache - create a flash cache
         """  
-        mock_client.getHostSet.return_value.setmembers = []
-        mock_client.return_value = mock_client
-        result = hostset.remove_hosts(mock_client,"user","password","hostname",["member1"])
+        mock_client.HPE3ParClient.getHostSet.return_value.setmembers = []
+        result = hostset.remove_hosts(mock_client.HPE3ParClient,"user","password","hostname",["member1"])
         self.assertEqual(result, (True, False, "No members to remove to the Host set hostname. Nothing to do.", {}))
         
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client.HPE3ParClient')
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')
     def test_remove_host_from_hostset_No_new_members_to_remove_from_the_Host_set_setmembers_none(self, mock_client):
         """
         hpe3par flash cache - create a flash cache
         """  
-        mock_client.getHostSet.return_value.setmembers = None
-        mock_client.return_value = mock_client
-        result = hostset.remove_hosts(mock_client,"user","password","hostname",["member1"])
+        mock_client.HPE3ParClient.getHostSet.return_value.setmembers = None
+        result = hostset.remove_hosts(mock_client.HPE3ParClient,"user","password","hostname",["member1"])
         self.assertEqual(result, (True, True, 'Removed hosts successfully.', {})) 
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_hostset.client')

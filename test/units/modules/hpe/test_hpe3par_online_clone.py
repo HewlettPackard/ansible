@@ -1,18 +1,18 @@
 # (C) Copyright 2018 Hewlett Packard Enterprise Development LP
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of version 3 of the GNU General Public License as
 # published by the Free Software Foundation.  Alternatively, at your
 # choice, you may also redistribute it and/or modify it under the terms
 # of the Apache License, version 2.0, available at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 # or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 # for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <https://www.gnu.org/licenses/>
 
@@ -197,14 +197,14 @@ class TestHpe3parOnlineClone(unittest.TestCase):
                 changed=True, msg="Resynced Online clone successfully.")
         # AnsibleModule.fail_json should not be called
         self.assertEqual(instance.fail_json.call_count, 0)
-        
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_online_clone.client.HPE3ParClient')
-    def test_create_online_clone(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = None
-        mock_HPE3ParClient.volumeExists.return_value = False
-        mock_HPE3ParClient.copyVolume.return_value = None
-        mock_HPE3ParClient.logout.return_value = None
-        self.assertEqual(hpe3par_online_clone.create_online_clone(mock_HPE3ParClient,
+
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_online_clone.client')
+    def test_create_online_clone(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = None
+        mock_client.HPE3ParClient.volumeExists.return_value = False
+        mock_client.HPE3ParClient.copyVolume.return_value = None
+        mock_client.HPE3ParClient.logout.return_value = None
+        self.assertEqual(hpe3par_online_clone.create_online_clone(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'base_volume',
@@ -216,8 +216,8 @@ class TestHpe3parOnlineClone(unittest.TestCase):
                             False
                         ), (True, True, "Created Online Clone %s successfully." % 'test_clone', {}))
 
-        mock_HPE3ParClient.volumeExists.return_value = True
-        self.assertEqual(hpe3par_online_clone.create_online_clone(mock_HPE3ParClient,
+        mock_client.HPE3ParClient.volumeExists.return_value = True
+        self.assertEqual(hpe3par_online_clone.create_online_clone(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'base_volume',
@@ -228,7 +228,7 @@ class TestHpe3parOnlineClone(unittest.TestCase):
                             'snap_cpg',
                             False
                         ), (True, False, "Clone already exists / creation in progress. Nothing to do.", {}))
-        self.assertEqual(hpe3par_online_clone.create_online_clone(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_online_clone.create_online_clone(mock_client.HPE3ParClient,
                             'USER',
                             None,
                             'base_volume',
@@ -239,7 +239,7 @@ class TestHpe3parOnlineClone(unittest.TestCase):
                             'snap_cpg',
                             False
                         ), (False, False, "Online clone create failed. Storage system username or password is null", {}))
-        self.assertEqual(hpe3par_online_clone.create_online_clone(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_online_clone.create_online_clone(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'base_volume',
@@ -250,7 +250,7 @@ class TestHpe3parOnlineClone(unittest.TestCase):
                             'snap_cpg',
                             False
                         ), (False, False, "Online clone create failed. Clone name is null", {}))
-        self.assertEqual(hpe3par_online_clone.create_online_clone(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_online_clone.create_online_clone(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None,
@@ -261,16 +261,16 @@ class TestHpe3parOnlineClone(unittest.TestCase):
                             'snap_cpg',
                             False
                         ), (False, False, "Online clone create failed. Base volume name is null", {}))
-                        
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_online_clone.client.HPE3ParClient')
-    def test_delete_clone(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = True
-        mock_HPE3ParClient.setSSHOptions.return_value = True
-        mock_HPE3ParClient.volumeExists.return_value = True
-        mock_HPE3ParClient.offlinePhysicalCopyExists.return_value = False
-        mock_HPE3ParClient.onlinePhysicalCopyExists.return_value = False
-        mock_HPE3ParClient.deleteVolume.return_value = None
-        self.assertEqual(hpe3par_online_clone.delete_clone(mock_HPE3ParClient,
+
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_online_clone.client')
+    def test_delete_clone(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = True
+        mock_client.HPE3ParClient.setSSHOptions.return_value = True
+        mock_client.HPE3ParClient.volumeExists.return_value = True
+        mock_client.HPE3ParClient.offlinePhysicalCopyExists.return_value = False
+        mock_client.HPE3ParClient.onlinePhysicalCopyExists.return_value = False
+        mock_client.HPE3ParClient.deleteVolume.return_value = None
+        self.assertEqual(hpe3par_online_clone.delete_clone(mock_client.HPE3ParClient,
                             '192.168.0.1',
                             'USER',
                             'PASS',
@@ -278,8 +278,8 @@ class TestHpe3parOnlineClone(unittest.TestCase):
                             'base_volume'
                         ), (True, True, "Deleted Online Clone %s successfully." % 'test_clone', {}))
 
-        mock_HPE3ParClient.offlinePhysicalCopyExists.return_value = True
-        self.assertEqual(hpe3par_online_clone.delete_clone(mock_HPE3ParClient,
+        mock_client.HPE3ParClient.offlinePhysicalCopyExists.return_value = True
+        self.assertEqual(hpe3par_online_clone.delete_clone(mock_client.HPE3ParClient,
                             '192.168.0.1',
                             'USER',
                             'PASS',
@@ -287,21 +287,21 @@ class TestHpe3parOnlineClone(unittest.TestCase):
                             'base_volume'
                         ), (False, False, "Clone/Volume is busy. Cannot be deleted", {}))
 
-        self.assertEqual(hpe3par_online_clone.delete_clone(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_online_clone.delete_clone(mock_client.HPE3ParClient,
                             '192.168.0.1',
                             None,
                             'PASS',
                             'test_clone',
                             'base_volume'
                         ), (False, False, "Online clone delete failed. Storage system username or password is null", {}))
-        self.assertEqual(hpe3par_online_clone.delete_clone(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_online_clone.delete_clone(mock_client.HPE3ParClient,
                             '192.168.0.1',
                             'USER',
                             'PASS',
                             None,
                             'base_volume'
                         ), (False, False, "Online clone delete failed. Clone name is null", {}))
-        self.assertEqual(hpe3par_online_clone.delete_clone(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_online_clone.delete_clone(mock_client.HPE3ParClient,
                             '192.168.0.1',
                             'USER',
                             'PASS',
@@ -309,20 +309,20 @@ class TestHpe3parOnlineClone(unittest.TestCase):
                             None
                         ), (False, False, "Online clone delete failed. Base volume name is null", {}))
 
-    @mock.patch('ansible.modules.storage.hpe.hpe3par_online_clone.client.HPE3ParClient')
-    def test_resync_clone(self, mock_HPE3ParClient):
-        mock_HPE3ParClient.login.return_value = True
-        self.assertEqual(hpe3par_online_clone.resync_clone(mock_HPE3ParClient,
+    @mock.patch('ansible.modules.storage.hpe.hpe3par_online_clone.client')
+    def test_resync_clone(self, mock_client):
+        mock_client.HPE3ParClient.login.return_value = True
+        self.assertEqual(hpe3par_online_clone.resync_clone(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             'test_clone'
                         ), (True, True, "Resync-ed Online Clone %s successfully." % 'test_clone', {}))
-        self.assertEqual(hpe3par_online_clone.resync_clone(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_online_clone.resync_clone(mock_client.HPE3ParClient,
                             None,
                             'PASS',
                             'test_clone'
                         ), (False, False, "Online clone resync failed. Storage system username or password is null", {}))
-        self.assertEqual(hpe3par_online_clone.resync_clone(mock_HPE3ParClient,
+        self.assertEqual(hpe3par_online_clone.resync_clone(mock_client.HPE3ParClient,
                             'USER',
                             'PASS',
                             None

@@ -230,9 +230,13 @@ null",
         return (False, False, "Host create failed. Host name must be atleast 1 character and more than 31 characters", {})
     try:
         client_obj.login(storage_system_username, storage_system_password)
+        if host_persona is not None:
+           host_persona = getattr(
+                client.HPE3ParClient, host_persona)
+
         client_obj.modifyHost(
             host_name, {
-                "newName": host_new_name, "persona": getattr(client.HPE3ParClient, host_persona)})
+                "newName": host_new_name, "persona": host_persona})
     except Exception as e:
         return (False, False, "Host modification failed | %s" % e, {})
     finally:

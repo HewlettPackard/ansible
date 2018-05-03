@@ -219,7 +219,7 @@ class TestHpe3parCPG(unittest.TestCase):
     @mock.patch('ansible.modules.storage.hpe.hpe3par_cpg.client')
     def test_cpg_ldlayout_map(self, mock_client):
         mock_client.HPE3ParClient.PORT = 1
-        mock_client.HPE3ParClient.RAID_MAP = {'R6': {'raid_value': 1, 'set_sizes': [1]},
+        mock_client.HPE3ParClient.RAID_MAP = {'R0': {'raid_value': 1, 'set_sizes': [1]},
                                               'R1': {'raid_value': 2, 'set_sizes': [2, 3, 4]},
                                               'R5': {'raid_value': 3, 'set_sizes': [3, 4, 5, 6, 7, 8, 9]},
                                               'R6': {'raid_value': 4, 'set_sizes': [6, 8, 10, 12, 16]}

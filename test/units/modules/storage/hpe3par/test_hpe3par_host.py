@@ -114,7 +114,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params = self.PARAMS_FOR_PRESENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_host.return_value = (True, True, "Created host host successfully.", {})
+        mock_host.return_value = (
+            True, True, "Created host host successfully.", {})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -131,7 +132,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params = self.PARAMS_FOR_PRESENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_host.return_value = (True, True, "Created host host successfully.", {"dummy": "dummy"})
+        mock_host.return_value = (
+            True, True, "Created host host successfully.", {"dummy": "dummy"})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -148,7 +150,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params = self.PARAMS_FOR_PRESENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_host.return_value = (False, False, "Host creation failed.", {"dummy": "dummy"})
+        mock_host.return_value = (
+            False, False, "Host creation failed.", {"dummy": "dummy"})
         host.main()
 
         # AnsibleModule.exit_json should not be activated
@@ -161,7 +164,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - create a host
         """
-        result = host.create_host(mock_client, None, None, None, None, None, None, None)
+        result = host.create_host(
+            mock_client, None, None, None, None, None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -174,7 +178,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - create a host
         """
-        result = host.create_host(mock_client, "user", "pass", None, None, None, None, None)
+        result = host.create_host(
+            mock_client, "user", "pass", None, None, None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -187,7 +192,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - create a host
         """
-        result = host.create_host(mock_client, "user", "pass", "host", None, None, None, None)
+        result = host.create_host(
+            mock_client, "user", "pass", "host", None, None, None, None)
         self.assertEqual(result, (True, False, "Host already present", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
@@ -197,9 +203,12 @@ class TestHpe3parHost(unittest.TestCase):
         hpe3par host - create a host
         """
         mock_HPE3ParClient.HOST_EDIT_REMOVE = 1
-        mock_client.HPE3ParClient.login.side_effect = Exception("Failed to login!")
-        result = host.create_host(mock_client.HPE3ParClient, "user", "password", 'host_name', None, None, None, None)
-        self.assertEqual(result, (False, False, "Host creation failed | Failed to login!", {}))
+        mock_client.HPE3ParClient.login.side_effect = Exception(
+            "Failed to login!")
+        result = host.create_host(
+            mock_client.HPE3ParClient, "user", "password", 'host_name', None, None, None, None)
+        self.assertEqual(
+            result, (False, False, "Host creation failed | Failed to login!", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
     def test_create_host_create_sucess_login(self, mock_client):
@@ -207,8 +216,10 @@ class TestHpe3parHost(unittest.TestCase):
         hpe3par flash cache - create a flash cache
         """
         mock_client.HPE3ParClient.hostExists.return_value = False
-        result = host.create_host(mock_client.HPE3ParClient, "user", "password", "hostname", None, None, "domain", "GENERIC")
-        self.assertEqual(result, (True, True, "Created host hostname successfully.", {}))
+        result = host.create_host(mock_client.HPE3ParClient, "user",
+                                  "password", "hostname", None, None, "domain", "GENERIC")
+        self.assertEqual(
+            result, (True, True, "Created host hostname successfully.", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
     def test_delete_host_username_empty(self, mock_client):
@@ -242,16 +253,20 @@ class TestHpe3parHost(unittest.TestCase):
         hpe3par host - create a host
         """
         result = host.delete_host(mock_client, "user", "pass", "host")
-        self.assertEqual(result, (True, True, "Deleted host host successfully.", {}))
+        self.assertEqual(
+            result, (True, True, "Deleted host host successfully.", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
     def test_delete_host_create_exception_in_login(self, mock_client):
         """
         hpe3par host - create a host
         """
-        mock_client.HPE3ParClient.login.side_effect = Exception("Failed to login!")
-        result = host.delete_host(mock_client.HPE3ParClient, "user", "password", 'host_name')
-        self.assertEqual(result, (False, False, "Host deletion failed | Failed to login!", {}))
+        mock_client.HPE3ParClient.login.side_effect = Exception(
+            "Failed to login!")
+        result = host.delete_host(
+            mock_client.HPE3ParClient, "user", "password", 'host_name')
+        self.assertEqual(
+            result, (False, False, "Host deletion failed | Failed to login!", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
     def test_delete_host_create_already_present(self, mock_client):
@@ -259,7 +274,8 @@ class TestHpe3parHost(unittest.TestCase):
         hpe3par flash cache - create a flash cache
         """
         mock_client.HPE3ParClient.hostExists.return_value = False
-        result = host.delete_host(mock_client.HPE3ParClient, "user", "password", "hostname")
+        result = host.delete_host(
+            mock_client.HPE3ParClient, "user", "password", "hostname")
         self.assertEqual(result, (True, False, "Host does not exist", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
@@ -280,7 +296,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - Modify a host
         """
-        result = host.modify_host(mock_client, "user", "pass", None, None, None)
+        result = host.modify_host(
+            mock_client, "user", "pass", None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -293,24 +310,30 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - Modify a host
         """
-        mock_client.HPE3ParClient.login.side_effect = Exception("Failed to login!")
-        result = host.modify_host(mock_client.HPE3ParClient, "user", "password", "host_name", None, None)
-        self.assertEqual(result, (False, False, "Host modification failed | Failed to login!", {}))
+        mock_client.HPE3ParClient.login.side_effect = Exception(
+            "Failed to login!")
+        result = host.modify_host(
+            mock_client.HPE3ParClient, "user", "password", "host_name", None, None)
+        self.assertEqual(
+            result, (False, False, "Host modification failed | Failed to login!", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
     def test_modify_host_create_success(self, mock_client):
         """
         hpe3par host - Modify a host
         """
-        result = host.modify_host(mock_client.HPE3ParClient, "user", "password", "host_name", None, None)
-        self.assertEqual(result, (True, True, "Modified host host_name successfully.", {}))
+        result = host.modify_host(
+            mock_client.HPE3ParClient, "user", "password", "host_name", None, None)
+        self.assertEqual(
+            result, (True, True, "Modified host host_name successfully.", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
     def test_add_initiator_chap_username_empty(self, mock_client):
         """
         hpe3par host - add_initiator_chap
         """
-        result = host.add_initiator_chap(mock_client, None, None, None, None, None, None)
+        result = host.add_initiator_chap(
+            mock_client, None, None, None, None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -323,7 +346,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_initiator_chap
         """
-        result = host.add_initiator_chap(mock_client, "user", "pass", None, None, None, None)
+        result = host.add_initiator_chap(
+            mock_client, "user", "pass", None, None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -336,7 +360,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_initiator_chap
         """
-        result = host.add_initiator_chap(mock_client, "user", "pass", "host", None, None, None)
+        result = host.add_initiator_chap(
+            mock_client, "user", "pass", "host", None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -349,7 +374,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_initiator_chap
         """
-        result = host.add_initiator_chap(mock_client, "user", "pass", "host", "chap", None, None)
+        result = host.add_initiator_chap(
+            mock_client, "user", "pass", "host", "chap", None, None)
 
         self.assertEqual(result, (
             False,
@@ -362,7 +388,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_initiator_chap
         """
-        result = host.add_initiator_chap(mock_client, "user", "pass", "host", "chap", "secret", True)
+        result = host.add_initiator_chap(
+            mock_client, "user", "pass", "host", "chap", "secret", True)
 
         self.assertEqual(result, (
             False,
@@ -375,7 +402,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_initiator_chap
         """
-        result = host.add_initiator_chap(mock_client, "user", "pass", "host", "chap", "secret", False)
+        result = host.add_initiator_chap(
+            mock_client, "user", "pass", "host", "chap", "secret", False)
 
         self.assertEqual(result, (
             False,
@@ -390,7 +418,8 @@ class TestHpe3parHost(unittest.TestCase):
         hpe3par host - add_initiator_chap
         """
         mock_HPE3ParClient.CHAP_INITIATOR = 1
-        result = host.add_initiator_chap(mock_client.HPE3ParClient, "user", "pass", "host", "chap", "secretsecretsecretsecretsecret12", True)
+        result = host.add_initiator_chap(
+            mock_client.HPE3ParClient, "user", "pass", "host", "chap", "secretsecretsecretsecretsecret12", True)
 
         self.assertEqual(result, (
             True, True, "Added initiator chap.", {}))
@@ -402,7 +431,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         mock_client.login.side_effect = Exception("Failed to login!")
         mock_client.return_value = mock_client
-        result = host.add_initiator_chap(mock_client, "user", "pass", "host", "chap", "secretsecretsecretsecretsecret12", True)
+        result = host.add_initiator_chap(
+            mock_client, "user", "pass", "host", "chap", "secretsecretsecretsecretsecret12", True)
 
         self.assertEqual(result, (
             False, False, "Add initiator chap failed | Failed to login!", {}))
@@ -414,7 +444,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_initiator_chap
         """
-        result = host.add_target_chap(mock_client, None, None, None, None, None, None)
+        result = host.add_target_chap(
+            mock_client, None, None, None, None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -427,7 +458,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_initiator_chap
         """
-        result = host.add_target_chap(mock_client, "user", "pass", None, None, None, None)
+        result = host.add_target_chap(
+            mock_client, "user", "pass", None, None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -440,7 +472,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_initiator_chap
         """
-        result = host.add_target_chap(mock_client, "user", "pass", "host", None, None, None)
+        result = host.add_target_chap(
+            mock_client, "user", "pass", "host", None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -453,7 +486,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_initiator_chap
         """
-        result = host.add_target_chap(mock_client, "user", "pass", "host", "chap", None, None)
+        result = host.add_target_chap(
+            mock_client, "user", "pass", "host", "chap", None, None)
 
         self.assertEqual(result, (
             False,
@@ -466,7 +500,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_initiator_chap
         """
-        result = host.add_target_chap(mock_client, "user", "pass", "host", "chap", "secret", True)
+        result = host.add_target_chap(
+            mock_client, "user", "pass", "host", "chap", "secret", True)
 
         self.assertEqual(result, (
             False,
@@ -479,7 +514,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_initiator_chap
         """
-        result = host.add_target_chap(mock_client, "user", "pass", "host", "chap", "secret", False)
+        result = host.add_target_chap(
+            mock_client, "user", "pass", "host", "chap", "secret", False)
 
         self.assertEqual(result, (
             False,
@@ -494,7 +530,8 @@ class TestHpe3parHost(unittest.TestCase):
         hpe3par host - add_initiator_chap
         """
         mock_initiator_chap_exists.return_value = False
-        result = host.add_target_chap(mock_client.HPE3ParClient, "user", "pass", "host", "chap", "secretsecretsecretsecretsecret12", True)
+        result = host.add_target_chap(mock_client.HPE3ParClient, "user",
+                                      "pass", "host", "chap", "secretsecretsecretsecretsecret12", True)
 
         self.assertEqual(result, (
             True, False, "Initiator chap does not exist", {}))
@@ -506,7 +543,8 @@ class TestHpe3parHost(unittest.TestCase):
         hpe3par host - add_initiator_chap
         """
         mock_HPE3ParClient.CHAP_TARGET = 1
-        result = host.add_target_chap(mock_client, "user", "pass", "host", "chap", "secretsecretsecretsecretsecret12", True)
+        result = host.add_target_chap(
+            mock_client, "user", "pass", "host", "chap", "secretsecretsecretsecretsecret12", True)
 
         self.assertEqual(result, (
             True, True, "Added target chap.", {}))
@@ -518,7 +556,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         mock_client.login.side_effect = Exception("Failed to login!")
         mock_client.return_value = mock_client
-        result = host.add_target_chap(mock_client, "user", "pass", "host", "chap", "secretsecretsecretsecretsecret12", True)
+        result = host.add_target_chap(
+            mock_client, "user", "pass", "host", "chap", "secretsecretsecretsecretsecret12", True)
 
         self.assertEqual(result, (
             False, False, "Add target chap failed | Failed to login!", {}))
@@ -530,7 +569,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - initiator_chap_exists
         """
-        result = host.initiator_chap_exists(mock_client, "user", "pass", "host")
+        result = host.initiator_chap_exists(
+            mock_client, "user", "pass", "host")
 #        self.assertEqual(result, True)
 
 # Remove
@@ -568,7 +608,8 @@ class TestHpe3parHost(unittest.TestCase):
         hpe3par host - remove_initiator_chap
         """
         mock_HPE3ParClient.HOST_EDIT_REMOVE = 1
-        result = host.remove_initiator_chap(mock_client, "user", "pass", "host")
+        result = host.remove_initiator_chap(
+            mock_client, "user", "pass", "host")
 
         self.assertEqual(result, (
             True, True, "Removed initiator chap.", {}))
@@ -580,7 +621,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         mock_client.login.side_effect = Exception("Failed to login!")
         mock_client.return_value = mock_client
-        result = host.remove_initiator_chap(mock_client, "user", "pass", "host")
+        result = host.remove_initiator_chap(
+            mock_client, "user", "pass", "host")
 
         self.assertEqual(result, (
             False, False, "Remove initiator chap failed | Failed to login!", {}))
@@ -618,7 +660,8 @@ class TestHpe3parHost(unittest.TestCase):
         hpe3par host - remove_target_chap
         """
         mock_HPE3ParClient.HOST_EDIT_REMOVE = 1
-        result = host.remove_target_chap(mock_client.HPE3ParClient, "user", "pass", "host")
+        result = host.remove_target_chap(
+            mock_client.HPE3ParClient, "user", "pass", "host")
 
         self.assertEqual(result, (
             True, True, "Removed target chap.", {}))
@@ -655,7 +698,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_fc_path_to_host
         """
-        result = host.add_fc_path_to_host(mock_client, "user", "pass", None, None)
+        result = host.add_fc_path_to_host(
+            mock_client, "user", "pass", None, None)
 
         self.assertEqual(result, (
             False,
@@ -668,7 +712,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_fc_path_to_host
         """
-        result = host.add_fc_path_to_host(mock_client, "user", "pass", "host", None)
+        result = host.add_fc_path_to_host(
+            mock_client, "user", "pass", "host", None)
 
         self.assertEqual(result, (
             False,
@@ -683,7 +728,8 @@ class TestHpe3parHost(unittest.TestCase):
         hpe3par host - add_fc_path_to_host
         """
         mock_HPE3ParClient.HOST_EDIT_ADD = 1
-        result = host.add_fc_path_to_host(mock_client.HPE3ParClient, "user", "pass", "host", "iscsi")
+        result = host.add_fc_path_to_host(
+            mock_client.HPE3ParClient, "user", "pass", "host", "iscsi")
 
         self.assertEqual(result, (
             True, True, "Added FC path to host successfully.", {}))
@@ -695,7 +741,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         mock_client.login.side_effect = Exception("Failed to login!")
         mock_client.return_value = mock_client
-        result = host.add_fc_path_to_host(mock_client, "user", "pass", "host", "iscsi")
+        result = host.add_fc_path_to_host(
+            mock_client, "user", "pass", "host", "iscsi")
 
         self.assertEqual(result, (
             False, False, "Add FC path to host failed | Failed to login!", {}))
@@ -707,7 +754,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - remove_fc_path_from_host
         """
-        result = host.remove_fc_path_from_host(mock_client, None, None, None, None, None)
+        result = host.remove_fc_path_from_host(
+            mock_client, None, None, None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -720,7 +768,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - remove_fc_path_from_host
         """
-        result = host.remove_fc_path_from_host(mock_client, "user", "pass", None, None, None)
+        result = host.remove_fc_path_from_host(
+            mock_client, "user", "pass", None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -733,7 +782,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - remove_fc_path_from_host
         """
-        result = host.remove_fc_path_from_host(mock_client, "user", "pass", "host", None, None)
+        result = host.remove_fc_path_from_host(
+            mock_client, "user", "pass", "host", None, None)
 
         self.assertEqual(result, (
             False,
@@ -748,7 +798,8 @@ class TestHpe3parHost(unittest.TestCase):
         hpe3par host - remove_fc_path_from_host
         """
         mock_HPE3ParClient.HOST_EDIT_REMOVE = 1
-        result = host.remove_fc_path_from_host(mock_client, "user", "pass", "host", "fcwwns", None)
+        result = host.remove_fc_path_from_host(
+            mock_client, "user", "pass", "host", "fcwwns", None)
 
         self.assertEqual(result, (
             True, True, "Removed FC path from host successfully.", {}))
@@ -760,7 +811,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         mock_client.login.side_effect = Exception("Failed to login!")
         mock_client.return_value = mock_client
-        result = host.remove_fc_path_from_host(mock_client, "user", "pass", "host", "fcwwns", None)
+        result = host.remove_fc_path_from_host(
+            mock_client, "user", "pass", "host", "fcwwns", None)
 
         self.assertEqual(result, (
             False, False, "Remove FC path from host failed | Failed to login!", {}))
@@ -772,7 +824,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_iscsi_path_to_host
         """
-        result = host.add_iscsi_path_to_host(mock_client, None, None, None, None)
+        result = host.add_iscsi_path_to_host(
+            mock_client, None, None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -785,7 +838,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_iscsi_path_to_host
         """
-        result = host.add_iscsi_path_to_host(mock_client, "user", "pass", None, None)
+        result = host.add_iscsi_path_to_host(
+            mock_client, "user", "pass", None, None)
 
         self.assertEqual(result, (
             False,
@@ -798,7 +852,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - add_iscsi_path_to_host
         """
-        result = host.add_iscsi_path_to_host(mock_client, "user", "pass", "host", None)
+        result = host.add_iscsi_path_to_host(
+            mock_client, "user", "pass", "host", None)
 
         self.assertEqual(result, (
             False,
@@ -813,7 +868,8 @@ class TestHpe3parHost(unittest.TestCase):
         hpe3par host - add_iscsi_path_to_host
         """
         mock_HPE3ParClient.HOST_EDIT_ADD = 1
-        result = host.add_iscsi_path_to_host(mock_client.HPE3ParClient, "user", "pass", "host", "iscsi")
+        result = host.add_iscsi_path_to_host(
+            mock_client.HPE3ParClient, "user", "pass", "host", "iscsi")
 
         self.assertEqual(result, (
             True, True, "Added ISCSI path to host successfully.", {}))
@@ -825,7 +881,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         mock_client.login.side_effect = Exception("Failed to login!")
         mock_client.return_value = mock_client
-        result = host.add_iscsi_path_to_host(mock_client, "user", "pass", "host", "iscsi")
+        result = host.add_iscsi_path_to_host(
+            mock_client, "user", "pass", "host", "iscsi")
 
         self.assertEqual(result, (
             False, False, "Add ISCSI path to host failed | Failed to login!", {}))
@@ -837,7 +894,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - remove_iscsi_path_from_host
         """
-        result = host.remove_iscsi_path_from_host(mock_client, None, None, None, None, None)
+        result = host.remove_iscsi_path_from_host(
+            mock_client, None, None, None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -850,7 +908,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - remove_iscsi_path_from_host
         """
-        result = host.remove_iscsi_path_from_host(mock_client, "user", "pass", None, None, None)
+        result = host.remove_iscsi_path_from_host(
+            mock_client, "user", "pass", None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -863,7 +922,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         hpe3par host - remove_iscsi_path_from_host
         """
-        result = host.remove_iscsi_path_from_host(mock_client, "user", "pass", "host", None, None)
+        result = host.remove_iscsi_path_from_host(
+            mock_client, "user", "pass", "host", None, None)
 
         self.assertEqual(result, (
             False,
@@ -878,7 +938,8 @@ class TestHpe3parHost(unittest.TestCase):
         hpe3par host - remove_iscsi_path_from_host
         """
         mock_HPE3ParClient.HOST_EDIT_REMOVE = 1
-        result = host.remove_iscsi_path_from_host(mock_client, "user", "pass", "host", "iscsi", None)
+        result = host.remove_iscsi_path_from_host(
+            mock_client, "user", "pass", "host", "iscsi", None)
 
         self.assertEqual(result, (
             True, True, "Removed ISCSI path from host successfully.", {}))
@@ -890,7 +951,8 @@ class TestHpe3parHost(unittest.TestCase):
         """
         mock_client.login.side_effect = Exception("Failed to login!")
         mock_client.return_value = mock_client
-        result = host.remove_iscsi_path_from_host(mock_client, "user", "pass", "host", "iscsi", None)
+        result = host.remove_iscsi_path_from_host(
+            mock_client, "user", "pass", "host", "iscsi", None)
 
         self.assertEqual(result, (
             False, False, "Remove ISCSI path from host failed | Failed to login!", {}))
@@ -909,7 +971,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params["state"] = "present"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_host.return_value = (True, True, "Created host host successfully.", {})
+        mock_host.return_value = (
+            True, True, "Created host host successfully.", {})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -963,7 +1026,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params["state"] = "add_initiator_chap"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_add_initiator_chap.return_value = (True, True, "Add_initiator_chap successfully.", {})
+        mock_add_initiator_chap.return_value = (
+            True, True, "Add_initiator_chap successfully.", {})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -981,7 +1045,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params["state"] = "add_initiator_chap"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_add_initiator_chap.return_value = (True, True, "Add_initiator_chap successfully.", {})
+        mock_add_initiator_chap.return_value = (
+            True, True, "Add_initiator_chap successfully.", {})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -999,7 +1064,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params["state"] = "add_initiator_chap"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_add_initiator_chap.return_value = (True, True, "Add_initiator_chap successfully.", {})
+        mock_add_initiator_chap.return_value = (
+            True, True, "Add_initiator_chap successfully.", {})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -1017,7 +1083,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params["state"] = "remove_initiator_chap"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_add_initiator_chap.return_value = (True, True, "Remove_initiator_chap successfully.", {})
+        mock_add_initiator_chap.return_value = (
+            True, True, "Remove_initiator_chap successfully.", {})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -1035,7 +1102,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params["state"] = "add_target_chap"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_add_target_chap.return_value = (True, True, "add_target_chap successfully.", {})
+        mock_add_target_chap.return_value = (
+            True, True, "add_target_chap successfully.", {})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -1052,7 +1120,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params["state"] = "remove_target_chap"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        host.remove_target_chap = mock.Mock(return_value=(True, True, "Remove_target_chap successfully.", {}))
+        host.remove_target_chap = mock.Mock(return_value=(
+            True, True, "Remove_target_chap successfully.", {}))
         host.main()
         # AnsibleModule.exit_json should be called
         mock_module.exit_json.assert_called_with(
@@ -1070,7 +1139,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params["state"] = "add_fc_path_to_host"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_add_fc_path_to_host.return_value = (True, True, "add_fc_path_to_host successfully.", {})
+        mock_add_fc_path_to_host.return_value = (
+            True, True, "add_fc_path_to_host successfully.", {})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -1088,7 +1158,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params["state"] = "remove_fc_path_from_host"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_remove_fc_path_from_host.return_value = (True, True, "remove_fc_path_from_host successfully.", {})
+        mock_remove_fc_path_from_host.return_value = (
+            True, True, "remove_fc_path_from_host successfully.", {})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -1106,7 +1177,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params["state"] = "add_iscsi_path_to_host"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_add_iscsi_path_to_host.return_value = (True, True, "add_iscsi_path_to_host successfully.", {})
+        mock_add_iscsi_path_to_host.return_value = (
+            True, True, "add_iscsi_path_to_host successfully.", {})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -1126,7 +1198,8 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params["state"] = "remove_iscsi_path_from_host"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_remove_iscsi_path_from_host.return_value = (True, True, "remove_iscsi_path_from_host successfully.", {})
+        mock_remove_iscsi_path_from_host.return_value = (
+            True, True, "remove_iscsi_path_from_host successfully.", {})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(

@@ -121,7 +121,8 @@ class TestHpe3parOfflineClone(unittest.TestCase):
         mock_module.params = PARAMS_FOR_PRESENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_create_offline_clone.return_value = (True, True, "Created Offline clone successfully.", {})
+        mock_create_offline_clone.return_value = (
+            True, True, "Created Offline clone successfully.", {})
         hpe3par_offline_clone.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -153,7 +154,8 @@ class TestHpe3parOfflineClone(unittest.TestCase):
         mock_module.params = PARAMS_FOR_ABSENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_delete_clone.return_value = (True, True, "Deleted Offline clone successfully.", {})
+        mock_delete_clone.return_value = (
+            True, True, "Deleted Offline clone successfully.", {})
         hpe3par_offline_clone.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -185,7 +187,8 @@ class TestHpe3parOfflineClone(unittest.TestCase):
         mock_module.params = PARAMS_FOR_RESYNC
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_resync_clone.return_value = (True, True, "Resynced Offline clone successfully.", {})
+        mock_resync_clone.return_value = (
+            True, True, "Resynced Offline clone successfully.", {})
         hpe3par_offline_clone.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -217,7 +220,8 @@ class TestHpe3parOfflineClone(unittest.TestCase):
         mock_module.params = PARAMS_FOR_RESYNC
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_stop_clone.return_value = (True, True, "Stopped Offline clone successfully.", {})
+        mock_stop_clone.return_value = (
+            True, True, "Stopped Offline clone successfully.", {})
         hpe3par_offline_clone.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -267,7 +271,8 @@ class TestHpe3parOfflineClone(unittest.TestCase):
                                                                     False,
                                                                     False,
                                                                     'MEDIUM'
-                                                                    ), (False, False, "Offline clone create failed. Storage system username or password is null", {}))
+                                                                    ), (False, False, "Offline clone create failed. Storage system username or password is \
+null", {}))
         self.assertEqual(hpe3par_offline_clone.create_offline_clone(mock_client.HPE3ParClient,
                                                                     '192.168.0.1',
                                                                     'USER',

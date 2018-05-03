@@ -678,8 +678,7 @@ class TestHpe3parHost(unittest.TestCase):
         self.assertEqual(result, (
             False, False, "Remove target chap failed | Failed to login!", {}))
 
- # Add FC
-
+    # Add FC
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
     def test_add_FC_username_empty(self, mock_client):
         """
@@ -747,8 +746,7 @@ class TestHpe3parHost(unittest.TestCase):
         self.assertEqual(result, (
             False, False, "Add FC path to host failed | Failed to login!", {}))
 
- # Remove FC
-
+    # Remove FC
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
     def test_remove_fc_username_empty(self, mock_client):
         """
@@ -817,8 +815,7 @@ class TestHpe3parHost(unittest.TestCase):
         self.assertEqual(result, (
             False, False, "Remove FC path from host failed | Failed to login!", {}))
 
- # Add ISCSI
-
+    # Add ISCSI
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
     def test_add_iscsi_username_empty(self, mock_client):
         """
@@ -887,8 +884,7 @@ class TestHpe3parHost(unittest.TestCase):
         self.assertEqual(result, (
             False, False, "Add ISCSI path to host failed | Failed to login!", {}))
 
- # Remove ISCSI
-
+    # Remove ISCSI
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
     def test_remove_iscsi_username_empty(self, mock_client):
         """
@@ -990,7 +986,6 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params["state"] = "absent"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        #mock_host.return_value = (True, True, "Created host host successfully.", {})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -1008,7 +1003,6 @@ class TestHpe3parHost(unittest.TestCase):
         mock_module.params["state"] = "modify"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        #mock_host.return_value = (True, True, "Created host host successfully.", {})
         host.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -1093,7 +1087,8 @@ class TestHpe3parHost(unittest.TestCase):
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.AnsibleModule')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.add_target_chap')
-    def test_main_exit_functionality_success_without_issue_attr_dict_add_target_chap(self, mock_add_target_chap, mock_module, mock_client):
+    def test_main_exit_functionality_success_without_issue_attr_dict_add_target_chap(
+            self, mock_add_target_chap, mock_module, mock_client):
         """
         hpe3par host - success check
         """
@@ -1111,7 +1106,8 @@ class TestHpe3parHost(unittest.TestCase):
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.AnsibleModule')
-    def test_main_exit_functionality_success_without_issue_attr_dict_remove_target_chap(self, mock_module, mock_client):
+    def test_main_exit_functionality_success_without_issue_attr_dict_remove_target_chap(
+            self, mock_module, mock_client):
         """
         hpe3par host - success check
         """
@@ -1184,12 +1180,13 @@ class TestHpe3parHost(unittest.TestCase):
         instance.exit_json.assert_called_with(
             changed=True, msg="add_iscsi_path_to_host successfully.")
         # AnsibleModule.fail_json should not be called
-        #self.assertEqual(instance.fail_json.call_count, 0)
+        # self.assertEqual(instance.fail_json.call_count, 0)
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.client')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.AnsibleModule')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_host.remove_iscsi_path_from_host')
-    def test_main_exit_functionality_success_without_issue_attr_dict_remove_iscsi_path_from_host(self, mock_remove_iscsi_path_from_host, mock_module, mock_client):
+    def test_main_exit_functionality_success_without_issue_attr_dict_remove_iscsi_path_from_host(
+            self, mock_remove_iscsi_path_from_host, mock_module, mock_client):
         """
         hpe3par host - success check
         """
@@ -1204,8 +1201,6 @@ class TestHpe3parHost(unittest.TestCase):
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
             changed=True, msg="remove_iscsi_path_from_host successfully.")
-        # AnsibleModule.fail_json should not be called
-        #self.assertEqual(instance.fail_json.call_count, 0)
 
 
 if __name__ == '__main__':

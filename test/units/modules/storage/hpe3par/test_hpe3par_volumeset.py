@@ -262,9 +262,7 @@ class TestHpe3parvolumeset(unittest.TestCase):
         self.assertEqual(
             result, (True, True, "Deleted volumeset hostname successfully.", {}))
 
-
-# Add volume to volumeset.
-
+    # Add volume to volumeset.
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_add_volume_to_volumeset_volumeset_username_empty(self, mock_client):
         """
@@ -377,9 +375,7 @@ class TestHpe3parvolumeset(unittest.TestCase):
         self.assertEqual(
             result, (True, True, 'Added volumes successfully.', {}))
 
-
-# Remove hosts from volumeset.
-
+    # Remove hosts from volumeset.
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_remove_host_from_volumeset_volumeset_username_empty(self, mock_client):
         """

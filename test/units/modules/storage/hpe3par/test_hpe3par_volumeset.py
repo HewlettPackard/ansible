@@ -84,7 +84,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         mock_module.params = self.PARAMS_FOR_PRESENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_volumeset.return_value = (True, True, "Created volumeset host successfully.", {})
+        mock_volumeset.return_value = (
+            True, True, "Created volumeset host successfully.", {})
         volumeset.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -103,7 +104,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         mock_module.params = self.PARAMS_FOR_PRESENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_volumeset.return_value = (True, True, "Created volumeset host successfully.", {"dummy": "dummy"})
+        mock_volumeset.return_value = (
+            True, True, "Created volumeset host successfully.", {"dummy": "dummy"})
         volumeset.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -122,7 +124,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         mock_module.params = self.PARAMS_FOR_PRESENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_volumeset.return_value = (False, False, "volumeset creation failed.", {"dummy": "dummy"})
+        mock_volumeset.return_value = (
+            False, False, "volumeset creation failed.", {"dummy": "dummy"})
         volumeset.main()
 
         # AnsibleModule.exit_json should not be activated
@@ -137,7 +140,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         hpe3par volumeset - create a volumeset
         """
-        result = volumeset.create_volumeset(mock_client, None, None, None, None, None)
+        result = volumeset.create_volumeset(
+            mock_client, None, None, None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -150,7 +154,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         hpe3par volumeset - create a volumeset
         """
-        result = volumeset.create_volumeset(mock_client, "user", "pass", None, None, None)
+        result = volumeset.create_volumeset(
+            mock_client, "user", "pass", None, None, None)
 
         self.assertEqual(result, (
             False,
@@ -163,18 +168,23 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         hpe3par volumeset - create a volumeset
         """
-        result = volumeset.create_volumeset(mock_client, "user", "pass", "host", None, None)
-        self.assertEqual(result, (True, False, "volumeset already present", {}))
+        result = volumeset.create_volumeset(
+            mock_client, "user", "pass", "host", None, None)
+        self.assertEqual(
+            result, (True, False, "volumeset already present", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_create_volumeset_create_exception_in_login(self, mock_client):
         """
         hpe3par volumeset - create a volumeset
         """
-        mock_client.HPE3ParClient.login.side_effect = Exception("Failed to login!")
+        mock_client.HPE3ParClient.login.side_effect = Exception(
+            "Failed to login!")
         mock_client.HPE3ParClient.return_value = mock_client
-        result = volumeset.create_volumeset(mock_client.HPE3ParClient, "user", "password", 'vs_name', None, None)
-        self.assertEqual(result, (False, False, "volumeset creation failed | Failed to login!", {}))
+        result = volumeset.create_volumeset(
+            mock_client.HPE3ParClient, "user", "password", 'vs_name', None, None)
+        self.assertEqual(
+            result, (False, False, "volumeset creation failed | Failed to login!", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_create_volumeset_create_sucess_login(self, mock_client):
@@ -183,12 +193,13 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         mock_client.HPE3ParClient.volumeSetExists.return_value = False
         mock_client.HPE3ParClient.return_value = mock_client
-        result = volumeset.create_volumeset(mock_client.HPE3ParClient, "user", "password", "hostname", "domain", ["member1"])
-        self.assertEqual(result, (True, True, "Created volumeset hostname successfully.", {}))
+        result = volumeset.create_volumeset(
+            mock_client.HPE3ParClient, "user", "password", "hostname", "domain", ["member1"])
+        self.assertEqual(
+            result, (True, True, "Created volumeset hostname successfully.", {}))
 
 
 # Delete volumeset
-
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_delete_volumeset_username_empty(self, mock_client):
         """
@@ -222,7 +233,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         mock_client.volumeSetExists.return_value = False
         mock_client.return_value = mock_client
-        result = volumeset.delete_volumeset(mock_client, "user", "pass", "host")
+        result = volumeset.delete_volumeset(
+            mock_client, "user", "pass", "host")
         self.assertEqual(result, (True, False, "volumeset does not exist", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
@@ -230,10 +242,13 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         hpe3par volumeset - delete a volumeset
         """
-        mock_client.HPE3ParClient.login.side_effect = Exception("Failed to login!")
+        mock_client.HPE3ParClient.login.side_effect = Exception(
+            "Failed to login!")
         mock_client.HPE3ParClient.return_value = mock_client
-        result = volumeset.delete_volumeset(mock_client.HPE3ParClient, "user", "password", "hostname")
-        self.assertEqual(result, (False, False, "volumeset delete failed | Failed to login!", {}))
+        result = volumeset.delete_volumeset(
+            mock_client.HPE3ParClient, "user", "password", "hostname")
+        self.assertEqual(
+            result, (False, False, "volumeset delete failed | Failed to login!", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_delete_volumeset_create_sucess_login(self, mock_client):
@@ -242,12 +257,13 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         mock_client.HPE3ParClient.volumeSetExists.return_value = True
         mock_client.HPE3ParClient.return_value = mock_client
-        result = volumeset.delete_volumeset(mock_client.HPE3ParClient, "user", "password", "hostname")
-        self.assertEqual(result, (True, True, "Deleted volumeset hostname successfully.", {}))
+        result = volumeset.delete_volumeset(
+            mock_client.HPE3ParClient, "user", "password", "hostname")
+        self.assertEqual(
+            result, (True, True, "Deleted volumeset hostname successfully.", {}))
 
 
 # Add volume to volumeset.
-
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_add_volume_to_volumeset_volumeset_username_empty(self, mock_client):
@@ -280,7 +296,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         hpe3par volumeset - Add volumes to a volumeset
         """
-        result = volumeset.add_volumes(mock_client, "user", "pass", "volumeset", None)
+        result = volumeset.add_volumes(
+            mock_client, "user", "pass", "volumeset", None)
 
         self.assertEqual(result, (
             False,
@@ -293,18 +310,23 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         hpe3par volumeset - add volume to a volumeset
         """
-        result = volumeset.add_volumes(mock_client, "user", "pass", "host", ["members"])
-        self.assertEqual(result, (True, True, 'Added volumes successfully.', {}))
+        result = volumeset.add_volumes(
+            mock_client, "user", "pass", "host", ["members"])
+        self.assertEqual(
+            result, (True, True, 'Added volumes successfully.', {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_add_volume_to_volumeset_volumeset_create_exception_in_login(self, mock_client):
         """
         hpe3par volumeset - add volume to a volumeset
         """
-        mock_client.HPE3ParClient.login.side_effect = Exception("Failed to login!")
+        mock_client.HPE3ParClient.login.side_effect = Exception(
+            "Failed to login!")
         mock_client.HPE3ParClient.return_value = mock_client
-        result = volumeset.add_volumes(mock_client.HPE3ParClient, "user", "password", "host", ["members"])
-        self.assertEqual(result, (False, False, "Add volumes to volumeset failed | Failed to login!", {}))
+        result = volumeset.add_volumes(
+            mock_client.HPE3ParClient, "user", "password", "host", ["members"])
+        self.assertEqual(
+            result, (False, False, "Add volumes to volumeset failed | Failed to login!", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_add_volume_to_volumeset_volumeset_doesnt_exists(self, mock_client):
@@ -313,18 +335,23 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         mock_client.HPE3ParClient.volumeSetExists.return_value = False
         mock_client.HPE3ParClient.return_value = mock_client
-        result = volumeset.add_volumes(mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
-        self.assertEqual(result, (False, False, "Volumeset does not exist", {}))
+        result = volumeset.add_volumes(
+            mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
+        self.assertEqual(
+            result, (False, False, "Volumeset does not exist", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_add_volume_to_volumeset_No_new_members_to_add_to_the_Host_set(self, mock_client):
         """
         hpe3par volumeset - add volume to a volumeset
         """
-        mock_client.HPE3ParClient.getVolumeSet.return_value.setmembers = ["member1"]
+        mock_client.HPE3ParClient.getVolumeSet.return_value.setmembers = [
+            "member1"]
         mock_client.HPE3ParClient.return_value = mock_client
-        result = volumeset.add_volumes(mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
-        self.assertEqual(result, (True, False, "No new members to add to the Volume set hostname#. Nothing to do.", {}))
+        result = volumeset.add_volumes(
+            mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
+        self.assertEqual(
+            result, (True, False, "No new members to add to the Volume set hostname#. Nothing to do.", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_add_volume_to_volumeset_No_new_members_to_add_to_the_Host_set_login(self, mock_client):
@@ -333,8 +360,10 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         mock_client.HPE3ParClient.getVolumeSet.return_value.setmembers = []
         mock_client.HPE3ParClient.return_value = mock_client
-        result = volumeset.add_volumes(mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
-        self.assertEqual(result, (True, True, 'Added volumes successfully.', {}))
+        result = volumeset.add_volumes(
+            mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
+        self.assertEqual(
+            result, (True, True, 'Added volumes successfully.', {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_add_volume_to_volumeset_No_new_members_to_add_to_the_Host_set_login_setmembers_none(self, mock_client):
@@ -343,12 +372,13 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         mock_client.HPE3ParClient.getVolumeSet.return_value.setmembers = None
         mock_client.HPE3ParClient.return_value = mock_client
-        result = volumeset.add_volumes(mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
-        self.assertEqual(result, (True, True, 'Added volumes successfully.', {}))
+        result = volumeset.add_volumes(
+            mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
+        self.assertEqual(
+            result, (True, True, 'Added volumes successfully.', {}))
 
 
 # Remove hosts from volumeset.
-
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_remove_host_from_volumeset_volumeset_username_empty(self, mock_client):
@@ -368,7 +398,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         hpe3par volumeset - remove volume from a volumeset
         """
-        result = volumeset.remove_volumes(mock_client, "user", "pass", None, None)
+        result = volumeset.remove_volumes(
+            mock_client, "user", "pass", None, None)
 
         self.assertEqual(result, (
             False,
@@ -381,7 +412,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         hpe3par volumeset - remove volume from a volumeset
         """
-        result = volumeset.remove_volumes(mock_client, "user", "pass", "volumeset", None)
+        result = volumeset.remove_volumes(
+            mock_client, "user", "pass", "volumeset", None)
 
         self.assertEqual(result, (
             False,
@@ -397,18 +429,23 @@ class TestHpe3parvolumeset(unittest.TestCase):
         mock_client.volumesetExists.return_value = True
         mock_client.getVolumeSet.return_value.setmembers = ["members"]
         mock_client.return_value = mock_client
-        result = volumeset.remove_volumes(mock_client, "user", "pass", "host", ["members"])
-        self.assertEqual(result, (True, True, 'Removed volumes successfully.', {}))
+        result = volumeset.remove_volumes(
+            mock_client, "user", "pass", "host", ["members"])
+        self.assertEqual(
+            result, (True, True, 'Removed volumes successfully.', {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_remove_host_from_volumeset_volumeset_create_exception_in_login(self, mock_client):
         """
         hpe3par volumeset - remove volume from a volumeset
         """
-        mock_client.HPE3ParClient.login.side_effect = Exception("Failed to login!")
+        mock_client.HPE3ParClient.login.side_effect = Exception(
+            "Failed to login!")
         mock_client.HPE3ParClient.return_value = mock_client
-        result = volumeset.remove_volumes(mock_client.HPE3ParClient, "user", "password", "host", ["members"])
-        self.assertEqual(result, (False, False, "Remove volumes from volumeset failed | Failed to login!", {}))
+        result = volumeset.remove_volumes(
+            mock_client.HPE3ParClient, "user", "password", "host", ["members"])
+        self.assertEqual(
+            result, (False, False, "Remove volumes from volumeset failed | Failed to login!", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_remove_host_from_volumeset_volumeset_doesnt_exists(self, mock_client):
@@ -417,7 +454,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         mock_client.HPE3ParClient.volumeSetExists.return_value = False
         mock_client.HPE3ParClient.return_value = mock_client
-        result = volumeset.remove_volumes(mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
+        result = volumeset.remove_volumes(
+            mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
         self.assertEqual(result, (True, False, "Volumeset does not exist", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
@@ -427,8 +465,10 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         mock_client.HPE3ParClient.getVolumeSet.return_value.setmembers = []
         mock_client.HPE3ParClient.return_value = mock_client
-        result = volumeset.remove_volumes(mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
-        self.assertEqual(result, (True, False, "No members to remove to the Volume set hostname. Nothing to do.", {}))
+        result = volumeset.remove_volumes(
+            mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
+        self.assertEqual(
+            result, (True, False, "No members to remove to the Volume set hostname. Nothing to do.", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     def test_remove_host_from_volumeset_No_new_members_to_remove_from_the_Host_set_setmembers_none(self, mock_client):
@@ -437,8 +477,10 @@ class TestHpe3parvolumeset(unittest.TestCase):
         """
         mock_client.HPE3ParClient.getVolumeSet.return_value.setmembers = None
         mock_client.HPE3ParClient.return_value = mock_client
-        result = volumeset.remove_volumes(mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
-        self.assertEqual(result, (True, True, 'Removed volumes successfully.', {}))
+        result = volumeset.remove_volumes(
+            mock_client.HPE3ParClient, "user", "password", "hostname", ["member1"])
+        self.assertEqual(
+            result, (True, True, 'Removed volumes successfully.', {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.client')
     @mock.patch('ansible.modules.storage.hpe.hpe3par_volumeset.AnsibleModule')
@@ -452,7 +494,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         mock_module.params["state"] = "present"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_volumeset.return_value = (True, True, "Created volumeset host successfully.", {})
+        mock_volumeset.return_value = (
+            True, True, "Created volumeset host successfully.", {})
         volumeset.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -472,7 +515,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         mock_module.params["state"] = "absent"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_volumeset.return_value = (True, True, "Deleted volumeset host successfully.", {})
+        mock_volumeset.return_value = (
+            True, True, "Deleted volumeset host successfully.", {})
         volumeset.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -492,7 +536,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         mock_module.params["state"] = "add_volumes"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_volumeset.return_value = (True, True, "add_volumes volumeset host successfully.", {})
+        mock_volumeset.return_value = (
+            True, True, "add_volumes volumeset host successfully.", {})
         volumeset.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -512,7 +557,8 @@ class TestHpe3parvolumeset(unittest.TestCase):
         mock_module.params["state"] = "remove_volumes"
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_volumeset.return_value = (True, True, "remove_volumes volumeset host successfully.", {})
+        mock_volumeset.return_value = (
+            True, True, "remove_volumes volumeset host successfully.", {})
         volumeset.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(

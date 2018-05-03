@@ -156,7 +156,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
         mock_module.params = PARAMS_FOR_PRESENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_create_snapshot.return_value = (True, True, "Created Snapshot successfully.", {})
+        mock_create_snapshot.return_value = (
+            True, True, "Created Snapshot successfully.", {})
         hpe3par_snapshot.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -195,7 +196,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
         mock_module.params = PARAMS_FOR_PRESENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_delete_snapshot.return_value = (True, True, "Deleted Snapshot test_snapshot successfully.", {})
+        mock_delete_snapshot.return_value = (
+            True, True, "Deleted Snapshot test_snapshot successfully.", {})
         hpe3par_snapshot.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -234,7 +236,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
         mock_module.params = PARAMS_FOR_PRESENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_modify_snapshot.return_value = (True, True, "Modified Snapshot test_snapshot successfully.", {})
+        mock_modify_snapshot.return_value = (
+            True, True, "Modified Snapshot test_snapshot successfully.", {})
         hpe3par_snapshot.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -273,7 +276,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
         mock_module.params = PARAMS_FOR_PRESENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_restore_snapshot_offline.return_value = (True, True, "Restored offline snapshot test_snapshot successfully.", {})
+        mock_restore_snapshot_offline.return_value = (
+            True, True, "Restored offline snapshot test_snapshot successfully.", {})
         hpe3par_snapshot.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -312,7 +316,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
         mock_module.params = PARAMS_FOR_PRESENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_restore_snapshot_online.return_value = (True, True, "Restored online snapshot test_snapshot successfully.", {})
+        mock_restore_snapshot_online.return_value = (
+            True, True, "Restored online snapshot test_snapshot successfully.", {})
         hpe3par_snapshot.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
@@ -472,7 +477,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
                                                                    'test_snapshot',
                                                                    'MEDIUM',
                                                                    False
-                                                                   ), (False, False, "Offline snapshot restore failed. Storage system username or password is null", {}))
+                                                                   ), (False, False, "Offline snapshot restore failed. Storage system username or password \
+is null", {}))
 
         self.assertEqual(hpe3par_snapshot.restore_snapshot_offline(mock_client.HPE3ParClient,
                                                                    'USER',
@@ -499,7 +505,8 @@ class TestHpe3parSnapshot(unittest.TestCase):
                                                                   'PASS',
                                                                   'test_snapshot',
                                                                   False
-                                                                  ), (False, False, "Online snapshot restore failed. Storage system username or password is null", {}))
+                                                                  ), (False, False, "Online snapshot restore failed. Storage system username or password is \
+null", {}))
 
         self.assertEqual(hpe3par_snapshot.restore_snapshot_online(mock_client.HPE3ParClient,
                                                                   'USER',

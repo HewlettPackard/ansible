@@ -22,6 +22,7 @@ import unittest
 from ansible.modules.storage.hpe import hpe3par_cpg
 from ansible.module_utils.basic import AnsibleModule
 
+
 class TestHpe3parCPG(unittest.TestCase):
 
     fields = {
@@ -106,11 +107,11 @@ class TestHpe3parCPG(unittest.TestCase):
         """
 
         PARAMS_FOR_PRESENT = {
-            'storage_system_ip':'192.168.0.1',
-            'storage_system_username':'USER',
-            'storage_system_password':'PASS',
-            'cpg_name':'test_cpg',
-            'domain':'test_domain',
+            'storage_system_ip': '192.168.0.1',
+            'storage_system_username': 'USER',
+            'storage_system_password': 'PASS',
+            'cpg_name': 'test_cpg',
+            'domain': 'test_domain',
             'growth_increment': 32768,
             'growth_increment_unit': 'MiB',
             'growth_limit': 32768,
@@ -138,12 +139,12 @@ class TestHpe3parCPG(unittest.TestCase):
         hpe3par flash cache - success check
         """
         PARAMS_FOR_PRESENT = {
-            'storage_system_ip':'192.168.0.1',
-            'storage_system_name':'3PAR',
-            'storage_system_username':'USER',
-            'storage_system_password':'PASS',
-            'cpg_name':'test_cpg',
-            'domain':'test_domain',
+            'storage_system_ip': '192.168.0.1',
+            'storage_system_name': '3PAR',
+            'storage_system_username': 'USER',
+            'storage_system_password': 'PASS',
+            'cpg_name': 'test_cpg',
+            'domain': 'test_domain',
             'growth_increment': 32768,
             'growth_increment_unit': 'MiB',
             'growth_limit': 32768,
@@ -160,11 +161,12 @@ class TestHpe3parCPG(unittest.TestCase):
         mock_module.params = PARAMS_FOR_PRESENT
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_create_cpg.return_value = (True, True, "Created CPG successfully.", {})
+        mock_create_cpg.return_value = (
+            True, True, "Created CPG successfully.", {})
         hpe3par_cpg.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
-                changed=True, msg="Created CPG successfully.")
+            changed=True, msg="Created CPG successfully.")
         # AnsibleModule.fail_json should not be called
         self.assertEqual(instance.fail_json.call_count, 0)
 
@@ -176,11 +178,11 @@ class TestHpe3parCPG(unittest.TestCase):
         hpe3par flash cache - success check
         """
         PARAMS_FOR_DELETE = {
-            'storage_system_ip':'192.168.0.1',
-            'storage_system_name':'3PAR',
-            'storage_system_username':'USER',
-            'storage_system_password':'PASS',
-            'cpg_name':'test_cpg',
+            'storage_system_ip': '192.168.0.1',
+            'storage_system_name': '3PAR',
+            'storage_system_username': 'USER',
+            'storage_system_password': 'PASS',
+            'cpg_name': 'test_cpg',
             'domain': None,
             'growth_increment': None,
             'growth_increment_unit': None,
@@ -198,34 +200,39 @@ class TestHpe3parCPG(unittest.TestCase):
         mock_module.params = PARAMS_FOR_DELETE
         mock_module.return_value = mock_module
         instance = mock_module.return_value
-        mock_delete_cpg.return_value = (True, True, "Deleted CPG test_cpg successfully.", {})
+        mock_delete_cpg.return_value = (
+            True, True, "Deleted CPG test_cpg successfully.", {})
         hpe3par_cpg.main()
         # AnsibleModule.exit_json should be called
         instance.exit_json.assert_called_with(
-                changed=True, msg="Deleted CPG test_cpg successfully.")
+            changed=True, msg="Deleted CPG test_cpg successfully.")
         # AnsibleModule.fail_json should not be called
         self.assertEqual(instance.fail_json.call_count, 0)
 
     def test_convert_to_binary_multiple(self):
         self.assertEqual(hpe3par_cpg.convert_to_binary_multiple(1, 'MiB'), 1)
-        self.assertEqual(hpe3par_cpg.convert_to_binary_multiple(1, 'GiB'), 1 * 1024)
-        self.assertEqual(hpe3par_cpg.convert_to_binary_multiple(1, 'TiB'), 1 * 1024 * 1024)
+        self.assertEqual(
+            hpe3par_cpg.convert_to_binary_multiple(1, 'GiB'), 1 * 1024)
+        self.assertEqual(hpe3par_cpg.convert_to_binary_multiple(
+            1, 'TiB'), 1 * 1024 * 1024)
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_cpg.client')
     def test_cpg_ldlayout_map(self, mock_client):
         mock_client.HPE3ParClient.PORT = 1
         mock_client.HPE3ParClient.RAID_MAP = {'R6': {'raid_value': 1, 'set_sizes': [1]},
-            'R1': {'raid_value': 2, 'set_sizes': [2, 3, 4]} ,
-            'R5': {'raid_value': 3, 'set_sizes': [3, 4, 5, 6, 7, 8, 9]},
-            'R6': {'raid_value': 4, 'set_sizes': [6, 8, 10, 12, 16]}
-        }
-        ldlayout_dict={'RAIDType': 'R6', 'HA': 'PORT'}
-        self.assertEqual(hpe3par_cpg.cpg_ldlayout_map(ldlayout_dict), {'RAIDType': 4, 'HA': 1})
+                                              'R1': {'raid_value': 2, 'set_sizes': [2, 3, 4]},
+                                              'R5': {'raid_value': 3, 'set_sizes': [3, 4, 5, 6, 7, 8, 9]},
+                                              'R6': {'raid_value': 4, 'set_sizes': [6, 8, 10, 12, 16]}
+                                              }
+        ldlayout_dict = {'RAIDType': 'R6', 'HA': 'PORT'}
+        self.assertEqual(hpe3par_cpg.cpg_ldlayout_map(
+            ldlayout_dict), {'RAIDType': 4, 'HA': 1})
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_cpg.client')
     def test_create_cpg(self, mock_client):
         hpe3par_cpg.validate_set_size = mock.Mock(return_value=True)
-        hpe3par_cpg.cpg_ldlayout_map = mock.Mock(return_value={'RAIDType': 4, 'HA': 1})
+        hpe3par_cpg.cpg_ldlayout_map = mock.Mock(
+            return_value={'RAIDType': 4, 'HA': 1})
         hpe3par_cpg.convert_to_binary_multiple = mock.Mock(return_value=1000)
 
         mock_client.HPE3ParClient.login.return_value = True
@@ -233,73 +240,72 @@ class TestHpe3parCPG(unittest.TestCase):
         mock_client.HPE3ParClient.FC = 1
         mock_client.HPE3ParClient.createCPG.return_value = True
 
-
         self.assertEqual(hpe3par_cpg.create_cpg(mock_client.HPE3ParClient,
-                            'USER',
-                            'PASS',
-                            'test_cpg',
-                            'test_domain',
-                            32768,
-                            'MiB',
-                            32768,
-                            'MiB',
-                            32768,
-                            'MiB',
-                            'R6',
-                            8,
-                            'MAG',
-                            'FC'
-                        ), (True, True, "Created CPG %s successfully." % 'test_cpg', {}))
+                                                'USER',
+                                                'PASS',
+                                                'test_cpg',
+                                                'test_domain',
+                                                32768,
+                                                'MiB',
+                                                32768,
+                                                'MiB',
+                                                32768,
+                                                'MiB',
+                                                'R6',
+                                                8,
+                                                'MAG',
+                                                'FC'
+                                                ), (True, True, "Created CPG %s successfully." % 'test_cpg', {}))
 
         mock_client.HPE3ParClient.cpgExists.return_value = True
         self.assertEqual(hpe3par_cpg.create_cpg(mock_client.HPE3ParClient,
-                            'USER',
-                            'PASS',
-                            'test_cpg',
-                            'test_domain',
-                            32768,
-                            'MiB',
-                            32768,
-                            'MiB',
-                            32768,
-                            'MiB',
-                            'R6',
-                            8,
-                            'MAG',
-                            'FC'
-                        ), (True, False, "CPG already present", {}))
+                                                'USER',
+                                                'PASS',
+                                                'test_cpg',
+                                                'test_domain',
+                                                32768,
+                                                'MiB',
+                                                32768,
+                                                'MiB',
+                                                32768,
+                                                'MiB',
+                                                'R6',
+                                                8,
+                                                'MAG',
+                                                'FC'
+                                                ), (True, False, "CPG already present", {}))
         self.assertEqual(hpe3par_cpg.create_cpg(mock_client.HPE3ParClient,
-                            None,
-                            'PASS',
-                            'test_cpg',
-                            'test_domain',
-                            32768,
-                            'MiB',
-                            32768,
-                            'MiB',
-                            32768,
-                            'MiB',
-                            'R6',
-                            8,
-                            'MAG',
-                            'FC'
-                        ), (False, False, "CPG create failed. Storage system username or password is null", {}))
+                                                None,
+                                                'PASS',
+                                                'test_cpg',
+                                                'test_domain',
+                                                32768,
+                                                'MiB',
+                                                32768,
+                                                'MiB',
+                                                32768,
+                                                'MiB',
+                                                'R6',
+                                                8,
+                                                'MAG',
+                                                'FC'
+                                                ), (False, False, "CPG create failed. Storage system username or password is null", {}))
         self.assertEqual(hpe3par_cpg.create_cpg(mock_client.HPE3ParClient,
-                            'USER',
-                            'PASS',
-                            None,
-                            'test_domain',
-                            32768,
-                            'MiB',
-                            32768,
-                            'MiB',
-                            32768,
-                            'MiB',
-                            'R6',
-                            8,
-                            'MAG',
-                            'FC'
-                        ), (False, False, "CPG create failed. CPG name is null", {}))
+                                                'USER',
+                                                'PASS',
+                                                None,
+                                                'test_domain',
+                                                32768,
+                                                'MiB',
+                                                32768,
+                                                'MiB',
+                                                32768,
+                                                'MiB',
+                                                'R6',
+                                                8,
+                                                'MAG',
+                                                'FC'
+                                                ), (False, False, "CPG create failed. CPG name is null", {}))
 
     @mock.patch('ansible.modules.storage.hpe.hpe3par_cpg.client')
     def test_delete_cpg(self, mock_client):
@@ -309,31 +315,29 @@ class TestHpe3parCPG(unittest.TestCase):
         mock_client.HPE3ParClient.deleteCPG.return_value = True
 
         self.assertEqual(hpe3par_cpg.delete_cpg(mock_client.HPE3ParClient,
-                            'USER',
-                            'PASS',
-                            'test_cpg'
-                        ), (True, True, "Deleted CPG %s successfully." % 'test_cpg', {}))
+                                                'USER',
+                                                'PASS',
+                                                'test_cpg'
+                                                ), (True, True, "Deleted CPG %s successfully." % 'test_cpg', {}))
 
         mock_client.HPE3ParClient.cpgExists.return_value = False
 
         self.assertEqual(hpe3par_cpg.delete_cpg(mock_client.HPE3ParClient,
-                            'USER',
-                            'PASS',
-                            'test_cpg'
-                        ), (True, False, "CPG does not exist", {}))
+                                                'USER',
+                                                'PASS',
+                                                'test_cpg'
+                                                ), (True, False, "CPG does not exist", {}))
         self.assertEqual(hpe3par_cpg.delete_cpg(mock_client.HPE3ParClient,
-                            None,
-                            'PASS',
-                            'test_cpg'
-                        ), (False, False, "CPG delete failed. Storage system username or password is null", {}))
+                                                None,
+                                                'PASS',
+                                                'test_cpg'
+                                                ), (False, False, "CPG delete failed. Storage system username or password is null", {}))
         self.assertEqual(hpe3par_cpg.delete_cpg(mock_client.HPE3ParClient,
-                            'USER',
-                            'PASS',
-                            None
-                        ), (False, False, "CPG delete failed. CPG name is null", {}))
-
+                                                'USER',
+                                                'PASS',
+                                                None
+                                                ), (False, False, "CPG delete failed. CPG name is null", {}))
 
 
 if __name__ == '__main__':
     unittest.main(exit=False)
-

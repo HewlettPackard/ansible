@@ -231,7 +231,7 @@ null",
     try:
         client_obj.login(storage_system_username, storage_system_password)
         if host_persona is not None:
-           host_persona = getattr(
+            host_persona = getattr(
                 client.HPE3ParClient, host_persona)
 
         client_obj.modifyHost(

@@ -127,7 +127,7 @@ options:
     required: true
 extends_documentation_fragment: hpe3par
 short_description: "Manage HPE 3PAR CPG"
-version_added: "2.4"
+version_added: "2.6"
 '''
 
 

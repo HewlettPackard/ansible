@@ -224,7 +224,7 @@ def create_cpg(
     if cpg_name is None:
         return (False, False, "CPG create failed. CPG name is null", {})
     if len(cpg_name) < 1 or len(cpg_name) > 31:
-        return (False, False, "CPG create failed. CPG name must be atleast 1 character and more than 31 characters", {})
+        return (False, False, "CPG create failed. CPG name must be atleast 1 character and not more than 31 characters", {})
     if not validate_set_size(raid_type, set_size):
         return (False, False, "Set size not part of RAID set", {})
     try:
@@ -281,7 +281,7 @@ def delete_cpg(
     if cpg_name is None:
         return (False, False, "CPG delete failed. CPG name is null", {})
     if len(cpg_name) < 1 or len(cpg_name) > 31:
-        return (False, False, "CPG create failed. CPG name must be atleast 1 character and more than 31 characters", {})
+        return (False, False, "CPG create failed. CPG name must be atleast 1 character and not more than 31 characters", {})
     try:
         client_obj.login(storage_system_username, storage_system_password)
         if client_obj.cpgExists(cpg_name):

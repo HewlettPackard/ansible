@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# (C) Copyright [YYYY] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2018] Hewlett Packard Enterprise Development LP
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of version 3 or later of the GNU General Public License

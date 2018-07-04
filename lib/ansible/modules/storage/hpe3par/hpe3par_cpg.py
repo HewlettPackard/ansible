@@ -169,6 +169,8 @@ except ImportError:
 
 
 def convert_to_binary_multiple(size, size_unit):
+    if size < 0:
+        return -1
     if size_unit == 'GiB':
         suffix = 'G'
     if size_unit == 'MiB':
@@ -181,7 +183,7 @@ def convert_to_binary_multiple(size, size_unit):
 
 
 def validate_set_size(raid_type, set_size):
-    if raid_type is not None or set_size is not None:
+    if raid_type:
         set_size_array = client.HPE3ParClient.RAID_MAP[raid_type]['set_sizes']
         if set_size in set_size_array:
             return True
@@ -214,11 +216,11 @@ def create_cpg(
         disk_type):
     try:
         if not validate_set_size(raid_type, set_size):
-            return (False, False, "Set size not part of RAID set", {})
+            return (False, False, "Set size %s not part of RAID set %s" % (set_size, raid_type))
         if not client_obj.cpgExists(cpg_name):
             ld_layout = dict()
             disk_patterns = []
-            if disk_type is not None and disk_type:
+            if disk_type:
                 disk_type = getattr(client.HPE3ParClient, disk_type)
                 disk_patterns = [{'diskType': disk_type}]
             ld_layout = {
@@ -264,7 +266,6 @@ def delete_cpg(
 
 
 def main():
-
     module = AnsibleModule(argument_spec=hpe3par.cpg_argument_spec())
     if not HAS_3PARCLIENT:
         module.fail_json(msg='the python hpe3par_sdk library is required (https://pypi.org/project/hpe3par_sdk)')
@@ -290,7 +291,21 @@ def main():
     secure = module.params["secure"]
 
     wsapi_url = 'https://%s:8080/api/v1' % storage_system_ip
-    client_obj = client.HPE3ParClient(wsapi_url, secure)
+    try:
+        client_obj = client.HPE3ParClient(wsapi_url, secure)
+    except hpe3parclient.exceptions.SSLCertFailed:
+        module.fail_json(msg="SSL Certificate Failed")
+    except hpe3parclient.exceptions.ConnectionError:
+        module.fail_json(msg="COnnection Error")
+    except hpe3parclient.exceptions.UnsupportedVersion:
+        module.fail_json(msg="Unsupported WSAPI version")
+    except:
+        module.fail_json(msg="Initializing client failed")
+
+    if storage_system_username is None and storage_system_password is None:
+        module.fail_json(msg="Storage system username or password is None")
+    if cpg_name is None:
+        module.fail_json(msg="CPG Name is None")
 
     # States
     if module.params["state"] == "present":

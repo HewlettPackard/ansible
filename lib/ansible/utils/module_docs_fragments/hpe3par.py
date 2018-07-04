@@ -39,4 +39,6 @@ requirements:
   - Ansible - 2.7
   - hpe3par_sdk
   - WSAPI service should be enabled on the 3PAR storage array.
+notes:
+  -  check_mode not supported
     '''

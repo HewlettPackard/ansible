@@ -293,11 +293,11 @@ def main():
     wsapi_url = 'https://%s:8080/api/v1' % storage_system_ip
     try:
         client_obj = client.HPE3ParClient(wsapi_url, secure)
-    except hpe3parclient.exceptions.SSLCertFailed:
+    except exceptions.SSLCertFailed:
         module.fail_json(msg="SSL Certificate Failed")
-    except hpe3parclient.exceptions.ConnectionError:
+    except exceptions.ConnectionError:
         module.fail_json(msg="COnnection Error")
-    except hpe3parclient.exceptions.UnsupportedVersion:
+    except exceptions.UnsupportedVersion:
         module.fail_json(msg="Unsupported WSAPI version")
     except:
         module.fail_json(msg="Initializing client failed")

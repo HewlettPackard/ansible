@@ -610,6 +610,7 @@ files:
   $modules/source_control/gitlab_user.py: dj-wasabi
   $modules/source_control/hg.py: yeukhon
   $modules/source_control/subversion.py: dsummersl
+  $modules/storage/hpe3par/hpe3par_cpg.py: farhan7500 gautamphegde
   $modules/storage/glusterfs/gluster_volume.py: rosmo
   $modules/storage/glusterfs/gluster_peer.py: sac
   $modules/storage/infinidat/: GR360RY vmalloc

@@ -165,13 +165,13 @@ def test_validate_set_size(mock_client):
                                           }
     raid_type = 'R0'
     set_size = 1
-    assert hpe3par_cpg.validate_set_size(raid_type, set_size) == True
+    assert hpe3par_cpg.validate_set_size(raid_type, set_size)
 
     set_size = 2
-    assert hpe3par_cpg.validate_set_size(raid_type, set_size) == False
+    assert not hpe3par_cpg.validate_set_size(raid_type, set_size)
 
     raid_type = None
-    assert hpe3par_cpg.validate_set_size(raid_type, set_size) == False
+    assert not hpe3par_cpg.validate_set_size(raid_type, set_size)
 
 @mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.client')
 def test_cpg_ldlayout_map(mock_client):

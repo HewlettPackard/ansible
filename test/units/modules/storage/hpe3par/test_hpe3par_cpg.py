@@ -173,6 +173,7 @@ def test_validate_set_size(mock_client):
     raid_type = None
     assert not hpe3par_cpg.validate_set_size(raid_type, set_size)
 
+
 @mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.client')
 def test_cpg_ldlayout_map(mock_client):
     mock_client.HPE3ParClient.PORT = 1

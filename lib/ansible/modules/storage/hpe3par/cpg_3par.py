@@ -32,7 +32,7 @@ author:
   - Gautham P Hegde (@gautamphegde)
 description:
   - Create and delete CPG on HPE 3PAR.
-module: hpe3par_cpg
+module: cpg_3par
 options:
   cpg_name:
     description:
@@ -126,7 +126,7 @@ version_added: 2.7
 
 EXAMPLES = r'''
     - name: Create CPG sample_cpg
-      hpe3par_cpg:
+      cpg_3par:
         storage_system_ip: 10.10.10.1
         storage_system_username: username
         storage_system_password: password
@@ -146,7 +146,7 @@ EXAMPLES = r'''
         secure: false
 
     - name: Delete CPG sample_cpg
-      hpe3par_cpg:
+      cpg_3par:
         storage_system_ip: 10.10.10.1
         storage_system_username: username
         storage_system_password: password

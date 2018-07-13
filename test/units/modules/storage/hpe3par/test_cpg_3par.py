@@ -24,14 +24,14 @@ sys.modules['hpe3par_sdk'] = mock.Mock()
 sys.modules['hpe3par_sdk.client'] = mock.Mock()
 sys.modules['hpe3parclient'] = mock.Mock()
 sys.modules['hpe3parclient.exceptions'] = mock.Mock()
-from ansible.modules.storage.hpe3par import hpe3par_cpg
+from ansible.modules.storage.hpe3par import cpg_3par
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils import hpe3par
 
 
-@mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.client')
-@mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.AnsibleModule')
-@mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.create_cpg')
+@mock.patch('ansible.modules.storage.hpe3par.cpg_3par.client')
+@mock.patch('ansible.modules.storage.hpe3par.cpg_3par.AnsibleModule')
+@mock.patch('ansible.modules.storage.hpe3par.cpg_3par.create_cpg')
 def test_module_args(mock_create_cpg, mock_module, mock_client):
     """
     hpe3par CPG - test module arguments
@@ -60,14 +60,14 @@ def test_module_args(mock_create_cpg, mock_module, mock_client):
     mock_module.return_value = mock_module
     mock_client.HPE3ParClient.login.return_value = True
     mock_create_cpg.return_value = (True, True, "Created CPG successfully.")
-    hpe3par_cpg.main()
+    cpg_3par.main()
     mock_module.assert_called_with(
         argument_spec=hpe3par.cpg_argument_spec())
 
 
-@mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.client')
-@mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.AnsibleModule')
-@mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.create_cpg')
+@mock.patch('ansible.modules.storage.hpe3par.cpg_3par.client')
+@mock.patch('ansible.modules.storage.hpe3par.cpg_3par.AnsibleModule')
+@mock.patch('ansible.modules.storage.hpe3par.cpg_3par.create_cpg')
 def test_main_exit_functionality_present_success_without_issue_attr_dict(mock_create_cpg, mock_module, mock_client):
     """
     hpe3par flash cache - success check
@@ -99,7 +99,7 @@ def test_main_exit_functionality_present_success_without_issue_attr_dict(mock_cr
     mock_client.HPE3ParClient.login.return_value = True
     mock_create_cpg.return_value = (
         True, True, "Created CPG successfully.")
-    hpe3par_cpg.main()
+    cpg_3par.main()
     # AnsibleModule.exit_json should be called
     instance.exit_json.assert_called_with(
         changed=True, msg="Created CPG successfully.")
@@ -107,9 +107,9 @@ def test_main_exit_functionality_present_success_without_issue_attr_dict(mock_cr
     assert instance.fail_json.call_count == 0
 
 
-@mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.client')
-@mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.AnsibleModule')
-@mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.delete_cpg')
+@mock.patch('ansible.modules.storage.hpe3par.cpg_3par.client')
+@mock.patch('ansible.modules.storage.hpe3par.cpg_3par.AnsibleModule')
+@mock.patch('ansible.modules.storage.hpe3par.cpg_3par.delete_cpg')
 def test_main_exit_functionality_absent_success_without_issue_attr_dict(mock_delete_cpg, mock_module, mock_client):
     """
     hpe3par flash cache - success check
@@ -141,7 +141,7 @@ def test_main_exit_functionality_absent_success_without_issue_attr_dict(mock_del
     mock_delete_cpg.return_value = (
         True, True, "Deleted CPG test_cpg successfully.")
     mock_client.HPE3ParClient.login.return_value = True
-    hpe3par_cpg.main()
+    cpg_3par.main()
     # AnsibleModule.exit_json should be called
     instance.exit_json.assert_called_with(
         changed=True, msg="Deleted CPG test_cpg successfully.")
@@ -150,13 +150,13 @@ def test_main_exit_functionality_absent_success_without_issue_attr_dict(mock_del
 
 
 def test_convert_to_binary_multiple():
-    assert hpe3par_cpg.convert_to_binary_multiple(-1.0, 'MiB') == -1
-    assert hpe3par_cpg.convert_to_binary_multiple(1.0, 'MiB') == 1
-    assert hpe3par_cpg.convert_to_binary_multiple(1.5, 'GiB') == 1.5 * 1024
-    assert hpe3par_cpg.convert_to_binary_multiple(1.5, 'TiB') == 1.5 * 1024 * 1024
+    assert cpg_3par.convert_to_binary_multiple(-1.0, 'MiB') == -1
+    assert cpg_3par.convert_to_binary_multiple(1.0, 'MiB') == 1
+    assert cpg_3par.convert_to_binary_multiple(1.5, 'GiB') == 1.5 * 1024
+    assert cpg_3par.convert_to_binary_multiple(1.5, 'TiB') == 1.5 * 1024 * 1024
 
 
-@mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.client')
+@mock.patch('ansible.modules.storage.hpe3par.cpg_3par.client')
 def test_validate_set_size(mock_client):
     mock_client.HPE3ParClient.RAID_MAP = {'R0': {'raid_value': 1, 'set_sizes': [1]},
                                           'R1': {'raid_value': 2, 'set_sizes': [2, 3, 4]},
@@ -165,16 +165,16 @@ def test_validate_set_size(mock_client):
                                           }
     raid_type = 'R0'
     set_size = 1
-    assert hpe3par_cpg.validate_set_size(raid_type, set_size)
+    assert cpg_3par.validate_set_size(raid_type, set_size)
 
     set_size = 2
-    assert not hpe3par_cpg.validate_set_size(raid_type, set_size)
+    assert not cpg_3par.validate_set_size(raid_type, set_size)
 
     raid_type = None
-    assert not hpe3par_cpg.validate_set_size(raid_type, set_size)
+    assert not cpg_3par.validate_set_size(raid_type, set_size)
 
 
-@mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.client')
+@mock.patch('ansible.modules.storage.hpe3par.cpg_3par.client')
 def test_cpg_ldlayout_map(mock_client):
     mock_client.HPE3ParClient.PORT = 1
     mock_client.HPE3ParClient.RAID_MAP = {'R0': {'raid_value': 1, 'set_sizes': [1]},
@@ -183,14 +183,14 @@ def test_cpg_ldlayout_map(mock_client):
                                           'R6': {'raid_value': 4, 'set_sizes': [6, 8, 10, 12, 16]}
                                           }
     ldlayout_dict = {'RAIDType': 'R6', 'HA': 'PORT'}
-    assert hpe3par_cpg.cpg_ldlayout_map(ldlayout_dict) == {
+    assert cpg_3par.cpg_ldlayout_map(ldlayout_dict) == {
         'RAIDType': 4, 'HA': 1}
 
 
-@mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.client')
+@mock.patch('ansible.modules.storage.hpe3par.cpg_3par.client')
 def test_create_cpg(mock_client):
-    hpe3par_cpg.validate_set_size = mock.Mock(return_value=True)
-    hpe3par_cpg.cpg_ldlayout_map = mock.Mock(
+    cpg_3par.validate_set_size = mock.Mock(return_value=True)
+    cpg_3par.cpg_ldlayout_map = mock.Mock(
         return_value={'RAIDType': 4, 'HA': 1})
 
     mock_client.HPE3ParClient.login.return_value = True
@@ -198,70 +198,70 @@ def test_create_cpg(mock_client):
     mock_client.HPE3ParClient.FC = 1
     mock_client.HPE3ParClient.createCPG.return_value = True
 
-    assert hpe3par_cpg.create_cpg(mock_client.HPE3ParClient,
-                                  'test_cpg',
-                                  'test_domain',
-                                  32768,
-                                  'MiB',
-                                  32768,
-                                  'MiB',
-                                  32768,
-                                  'MiB',
-                                  'R6',
-                                  8,
-                                  'MAG',
-                                  'FC'
-                                  ) == (True, True, "Created CPG %s successfully." % 'test_cpg')
+    assert cpg_3par.create_cpg(mock_client.HPE3ParClient,
+                               'test_cpg',
+                               'test_domain',
+                               32768,
+                               'MiB',
+                               32768,
+                               'MiB',
+                               32768,
+                               'MiB',
+                               'R6',
+                               8,
+                               'MAG',
+                               'FC'
+                               ) == (True, True, "Created CPG %s successfully." % 'test_cpg')
 
     mock_client.HPE3ParClient.cpgExists.return_value = True
-    assert hpe3par_cpg.create_cpg(mock_client.HPE3ParClient,
-                                  'test_cpg',
-                                  'test_domain',
-                                  32768,
-                                  'MiB',
-                                  32768,
-                                  'MiB',
-                                  32768,
-                                  'MiB',
-                                  'R6',
-                                  8,
-                                  'MAG',
-                                  'FC'
-                                  ) == (True, False, 'CPG already present')
+    assert cpg_3par.create_cpg(mock_client.HPE3ParClient,
+                               'test_cpg',
+                               'test_domain',
+                               32768,
+                               'MiB',
+                               32768,
+                               'MiB',
+                               32768,
+                               'MiB',
+                               'R6',
+                               8,
+                               'MAG',
+                               'FC'
+                               ) == (True, False, 'CPG already present')
 
-    hpe3par_cpg.validate_set_size = mock.Mock(return_value=False)
-    assert hpe3par_cpg.create_cpg(mock_client.HPE3ParClient,
-                                  'test_cpg',
-                                  'test_domain',
-                                  32768,
-                                  'MiB',
-                                  32768,
-                                  'MiB',
-                                  32768,
-                                  'MiB',
-                                  'R6',
-                                  3,
-                                  'MAG',
-                                  'FC'
-                                  ) == (False, False, 'Set size 3 not part of RAID set R6')
+    cpg_3par.validate_set_size = mock.Mock(return_value=False)
+    assert cpg_3par.create_cpg(mock_client.HPE3ParClient,
+                               'test_cpg',
+                               'test_domain',
+                               32768,
+                               'MiB',
+                               32768,
+                               'MiB',
+                               32768,
+                               'MiB',
+                               'R6',
+                               3,
+                               'MAG',
+                               'FC'
+                               ) == (False, False, 'Set size 3 not part of RAID set R6')
 
 
-@mock.patch('ansible.modules.storage.hpe3par.hpe3par_cpg.client')
+@mock.patch('ansible.modules.storage.hpe3par.cpg_3par.client')
 def test_delete_cpg(mock_client):
     mock_client.HPE3ParClient.login.return_value = True
     mock_client.HPE3ParClient.cpgExists.return_value = True
     mock_client.HPE3ParClient.FC = 1
     mock_client.HPE3ParClient.deleteCPG.return_value = True
 
-    assert hpe3par_cpg.delete_cpg(mock_client.HPE3ParClient,
-                                  'test_cpg'
-                                  ) == (True, True, "Deleted CPG %s successfully." % 'test_cpg')
+    assert cpg_3par.delete_cpg(mock_client.HPE3ParClient,
+                               'test_cpg'
+                               ) == (True, True, "Deleted CPG %s successfully." % 'test_cpg')
 
     mock_client.HPE3ParClient.cpgExists.return_value = False
 
-    assert hpe3par_cpg.delete_cpg(mock_client.HPE3ParClient,
-                                  'test_cpg'
-                                  ) == (True, False, "CPG does not exist")
-    assert hpe3par_cpg.delete_cpg(mock_client.HPE3ParClient,
-                                  None
-                                  ) == (True, False, "CPG does not exist")
+    assert cpg_3par.delete_cpg(mock_client.HPE3ParClient,
+                               'test_cpg'
+                               ) == (True, False, "CPG does not exist")
+    assert cpg_3par.delete_cpg(mock_client.HPE3ParClient,
+                               None
+                               ) == (True, False, "CPG does not exist")

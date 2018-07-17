@@ -53,40 +53,16 @@ options:
     description:
       - Specifies the growth increment the amount of logical disk storage
        created on each auto-grow operation.
-  growth_increment_unit:
-    choices:
-      - MiB
-      - GiB
-      - TiB
-    default: GiB
-    description:
-      - Unit of growth increment.
   growth_limit:
     default: -1.0
     description:
       - Specifies that the autogrow operation is limited to the specified
        storage amount that sets the growth limit.
-  growth_limit_unit:
-    choices:
-      - MiB
-      - GiB
-      - TiB
-    default: GiB
-    description:
-      - Unit of growth limit.
   growth_warning:
     default: -1.0
     description:
       - Specifies that the threshold of used logical disk space when exceeded
        results in a warning alert.
-  growth_warning_unit:
-    choices:
-      - MiB
-      - GiB
-      - TiB
-    default: GiB
-    description:
-      - Unit of growth warning.
   high_availability:
     choices:
       - PORT
@@ -133,12 +109,9 @@ EXAMPLES = r'''
         state: present
         cpg_name: sample_cpg
         domain: sample_domain
-        growth_increment: 32000
-        growth_increment_unit: MiB
-        growth_limit: 64000
-        growth_limit_unit: MiB
-        growth_warning: 48000
-        growth_warning_unit: MiB
+        growth_increment: 32000 MiB
+        growth_limit: 64000 MiB
+        growth_warning: 48000 MiB
         raid_type: R6
         set_size: 8
         high_availability: MAG
@@ -168,7 +141,8 @@ except ImportError:
     HAS_3PARCLIENT = False
 
 
-def convert_to_binary_multiple(size, size_unit):
+def convert_to_binary_multiple(size_with_unit):
+    size, size_unit = size_with_unit.split()
     if size < 0:
         return -1
     if size_unit == 'GiB':
@@ -205,11 +179,8 @@ def create_cpg(
         cpg_name,
         domain,
         growth_increment,
-        growth_increment_unit,
         growth_limit,
-        growth_limit_unit,
         growth_warning,
-        growth_warning_unit,
         raid_type,
         set_size,
         high_availability,
@@ -231,13 +202,13 @@ def create_cpg(
             ld_layout = cpg_ldlayout_map(ld_layout)
             if growth_increment is not None:
                 growth_increment = convert_to_binary_multiple(
-                    growth_increment, growth_increment_unit)
+                    growth_increment)
             if growth_limit is not None:
                 growth_limit = convert_to_binary_multiple(
-                    growth_limit, growth_limit_unit)
+                    growth_limit)
             if growth_warning is not None:
                 growth_warning = convert_to_binary_multiple(
-                    growth_warning, growth_warning_unit)
+                    growth_warning)
             optional = {
                 'domain': domain,
                 'growthIncrementMiB': growth_increment,
@@ -279,11 +250,8 @@ def main():
     cpg_name = module.params["cpg_name"]
     domain = module.params["domain"]
     growth_increment = module.params["growth_increment"]
-    growth_increment_unit = module.params["growth_increment_unit"]
     growth_limit = module.params["growth_limit"]
-    growth_limit_unit = module.params["growth_limit_unit"]
     growth_warning = module.params["growth_warning"]
-    growth_warning_unit = module.params["growth_warning_unit"]
     raid_type = module.params["raid_type"]
     set_size = module.params["set_size"]
     high_availability = module.params["high_availability"]
@@ -316,11 +284,8 @@ def main():
                 cpg_name,
                 domain,
                 growth_increment,
-                growth_increment_unit,
                 growth_limit,
-                growth_limit_unit,
                 growth_warning,
-                growth_warning_unit,
                 raid_type,
                 set_size,
                 high_availability,

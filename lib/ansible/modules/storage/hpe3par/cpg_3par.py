@@ -143,7 +143,7 @@ except ImportError:
 
 def convert_to_binary_multiple(size_with_unit):
     size, size_unit = size_with_unit.split()
-    if size < 0:
+    if int(float(size)) < 0:
         return -1
     if size_unit == 'GiB':
         suffix = 'G'

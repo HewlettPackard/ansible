@@ -150,10 +150,10 @@ def test_main_exit_functionality_absent_success_without_issue_attr_dict(mock_del
 
 
 def test_convert_to_binary_multiple():
-    assert cpg_3par.convert_to_binary_multiple(-1.0, 'MiB') == -1
-    assert cpg_3par.convert_to_binary_multiple(1.0, 'MiB') == 1
-    assert cpg_3par.convert_to_binary_multiple(1.5, 'GiB') == 1.5 * 1024
-    assert cpg_3par.convert_to_binary_multiple(1.5, 'TiB') == 1.5 * 1024 * 1024
+    assert cpg_3par.convert_to_binary_multiple('-1.0 MiB') == -1
+    assert cpg_3par.convert_to_binary_multiple('1.0 MiB') == 1
+    assert cpg_3par.convert_to_binary_multiple('1.5 GiB') == 1.5 * 1024
+    assert cpg_3par.convert_to_binary_multiple('1.5 TiB') == 1.5 * 1024 * 1024
 
 
 @mock.patch('ansible.modules.storage.hpe3par.cpg_3par.client')
@@ -201,12 +201,9 @@ def test_create_cpg(mock_client):
     assert cpg_3par.create_cpg(mock_client.HPE3ParClient,
                                'test_cpg',
                                'test_domain',
-                               32768,
-                               'MiB',
-                               32768,
-                               'MiB',
-                               32768,
-                               'MiB',
+                               '32768 MiB',
+                               '32768 MiB',
+                               '32768 MiB',
                                'R6',
                                8,
                                'MAG',
@@ -217,12 +214,9 @@ def test_create_cpg(mock_client):
     assert cpg_3par.create_cpg(mock_client.HPE3ParClient,
                                'test_cpg',
                                'test_domain',
-                               32768,
-                               'MiB',
-                               32768,
-                               'MiB',
-                               32768,
-                               'MiB',
+                               '32768.0 MiB',
+                               '32768.0 MiB',
+                               '32768.0 MiB',
                                'R6',
                                8,
                                'MAG',
@@ -233,12 +227,9 @@ def test_create_cpg(mock_client):
     assert cpg_3par.create_cpg(mock_client.HPE3ParClient,
                                'test_cpg',
                                'test_domain',
-                               32768,
-                               'MiB',
-                               32768,
-                               'MiB',
-                               32768,
-                               'MiB',
+                               '32768.0 MiB',
+                               '32768 MiB',
+                               '32768.0 MiB',
                                'R6',
                                3,
                                'MAG',

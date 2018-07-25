@@ -150,6 +150,7 @@ def test_main_exit_functionality_absent_success_without_issue_attr_dict(mock_del
 
 
 def test_convert_to_binary_multiple():
+    assert cpg_3par.convert_to_binary_multiple(-1.0) == -1
     assert cpg_3par.convert_to_binary_multiple('-1.0 MiB') == -1
     assert cpg_3par.convert_to_binary_multiple('1.0 MiB') == 1
     assert cpg_3par.convert_to_binary_multiple('1.5 GiB') == 1.5 * 1024

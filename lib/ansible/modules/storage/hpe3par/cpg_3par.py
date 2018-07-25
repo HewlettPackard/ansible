@@ -142,6 +142,8 @@ except ImportError:
 
 
 def convert_to_binary_multiple(size_with_unit):
+    if size_with_unit == -1.0:
+        return -1
     size, size_unit = size_with_unit.split()
     if int(float(size)) < 0:
         return -1

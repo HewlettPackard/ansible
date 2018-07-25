@@ -50,31 +50,16 @@ def cpg_argument_spec():
             "type": "str"
         },
         "growth_increment": {
-            "type": "float",
-            "default": -1.0
-        },
-        "growth_increment_unit": {
             "type": "str",
-            "choices": ['TiB', 'GiB', 'MiB'],
-            "default": 'GiB'
+            "default": -1.0
         },
         "growth_limit": {
-            "type": "float",
-            "default": -1.0
-        },
-        "growth_limit_unit": {
             "type": "str",
-            "choices": ['TiB', 'GiB', 'MiB'],
-            "default": 'GiB'
+            "default": -1.0
         },
         "growth_warning": {
-            "type": "float",
-            "default": -1.0
-        },
-        "growth_warning_unit": {
             "type": "str",
-            "choices": ['TiB', 'GiB', 'MiB'],
-            "default": 'GiB'
+            "default": -1.0
         },
         "raid_type": {
             "required": False,

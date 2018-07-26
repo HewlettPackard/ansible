@@ -144,17 +144,19 @@ except ImportError:
 def convert_to_binary_multiple(size_with_unit):
     if size_with_unit == "-1.0":
         return -1
-    size, size_unit = size_with_unit.split()
-    if int(float(size)) < 0:
-        return -1
-    if size_unit == 'GiB':
-        suffix = 'G'
-    if size_unit == 'MiB':
-        suffix = 'M'
-    if size_unit == 'TiB':
-        suffix = 'T'
+    valid_units = ['MiB', 'GiB', 'TiB']
+    valid_unit = False
+    for unit in valid_units:
+        if size_with_unit.strip().endswith(unit):
+            valid_unit = True
+            size = size_with_unit.split(unit)[0]
+            if float(size) < 0:
+                return -1
+    if not valid_unit:
+        raise ValueError("%s does not have a valid unit. The unit must be one of %s" % (size_with_unit, valid_units))
 
-    size_kib = basic.human_to_bytes(str(size) + suffix)
+    size = size_with_unit.replace(" ", "").split('iB')[0]
+    size_kib = basic.human_to_bytes(size)
     return int(size_kib / (1024 * 1024))
 
 

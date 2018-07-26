@@ -159,7 +159,6 @@ def test_convert_to_binary_multiple():
     assert cpg_3par.convert_to_binary_multiple(' 1.5 TiB ') == 1.5 * 1024 * 1024
 
 
-
 @mock.patch('ansible.modules.storage.hpe3par.cpg_3par.client')
 def test_validate_set_size(mock_client):
     mock_client.HPE3ParClient.RAID_MAP = {'R0': {'raid_value': 1, 'set_sizes': [1]},

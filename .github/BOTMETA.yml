@@ -302,15 +302,7 @@ files:
   $modules/source_control/git.py: $team_ansible
   $modules/source_control/github_key.py:
     ignored: erydo
-  $modules/source_control/github_release.py: adrianmoisey
-  $modules/source_control/gitlab_group.py: dj-wasabi
-  $modules/source_control/gitlab_project.py: dj-wasabi
-  $modules/source_control/gitlab_user.py: dj-wasabi
-  $modules/source_control/hg.py: yeukhon
-  $modules/source_control/subversion.py: dsummersl
   $modules/storage/hpe3par/: farhan7500 gautamphegde
-  $modules/storage/glusterfs/gluster_volume.py: rosmo
-  $modules/storage/glusterfs/gluster_peer.py: sac
   $modules/storage/infinidat/: GR360RY vmalloc
   $modules/storage/netapp/: $team_netapp
   $modules/storage/purestorage/:

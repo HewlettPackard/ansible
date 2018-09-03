@@ -1,4 +1,4 @@
-# (C) Copyright 2018 Hewlett Packard Enterprise Development LP
+# Copyright: (c) 2018, Hewlett Packard Enterprise Development LP
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of version 3 or later of the GNU General Public License as
@@ -51,15 +51,12 @@ def cpg_argument_spec():
         },
         "growth_increment": {
             "type": "str",
-            "default": -1.0
         },
         "growth_limit": {
             "type": "str",
-            "default": -1.0
         },
         "growth_warning": {
             "type": "str",
-            "default": -1.0
         },
         "raid_type": {
             "required": False,

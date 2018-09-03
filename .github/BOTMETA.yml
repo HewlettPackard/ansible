@@ -618,6 +618,10 @@ files:
     maintainers: $team_scaleway
     labels:
       - cloud
+    support: community
+  $module_utils/hpe3par.py: &hpe3par
+    maintainers: farhan7500 gautamphegde
+    support: community
   lib/ansible/playbook/handler.py:
     keywords:
       - handlers
@@ -1041,6 +1045,7 @@ files:
   lib/ansible/utils/module_docs_fragments/acme.py:
     support: community
     maintainers: resmo felixfontein
+  lib/ansible/utils/module_docs_fragments/hpe3par: *hpe3par
   test/sanity/validate-modules:
     notified:
       - mattclay
@@ -1101,6 +1106,7 @@ files:
     maintainers: $team_nxos
     labels:
       - networking
+  test/units/modules/storage/hpe3par: *hpe3par
   test/sanity/pep8/legacy-files.txt:
     notified: mattclay
   hacking/report.py:

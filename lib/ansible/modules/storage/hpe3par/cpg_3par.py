@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# (C) Copyright 2018 Hewlett Packard Enterprise Development LP
+# Copyright: (c) 2018, Hewlett Packard Enterprise Development LP
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of version 3 or later of the GNU General Public License as
@@ -49,17 +49,14 @@ options:
     description:
       - Specifies the name of the domain in which the object will reside.
   growth_increment:
-    default: -1.0
     description:
       - Specifies the growth increment the amount of logical disk storage
        created on each auto-grow operation.
   growth_limit:
-    default: -1.0
     description:
       - Specifies that the autogrow operation is limited to the specified
        storage amount that sets the growth limit.
   growth_warning:
-    default: -1.0
     description:
       - Specifies that the threshold of used logical disk space when exceeded
        results in a warning alert.
@@ -92,9 +89,9 @@ options:
     required: true
   secure:
     description:
-      - Specifies whether cerificate need to be installed while communicating
+      - Specifies whether certificate need to be validated while communicating
     type: bool
-    default: false
+    default: no
 extends_documentation_fragment: hpe3par
 version_added: 2.7
 '''
@@ -116,7 +113,7 @@ EXAMPLES = r'''
         set_size: 8
         high_availability: MAG
         disk_type: FC
-        secure: false
+        secure: no
 
     - name: Delete CPG sample_cpg
       cpg_3par:
@@ -125,14 +122,15 @@ EXAMPLES = r'''
         storage_system_password: password
         state: absent
         cpg_name: sample_cpg
-        secure: false
+        secure: no
 '''
 
 RETURN = r'''
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils import hpe3par, basic
+from ansible.module_utils import basic
+from ansible.module_utils.storage.hpe3par import hpe3par
 try:
     from hpe3par_sdk import client
     from hpe3parclient import exceptions
@@ -142,7 +140,7 @@ except ImportError:
 
 
 def convert_to_binary_multiple(size_with_unit):
-    if size_with_unit == "-1.0":
+    if size_with_unit is None:
         return -1
     valid_units = ['MiB', 'GiB', 'TiB']
     valid_unit = False
@@ -268,13 +266,13 @@ def main():
     except exceptions.SSLCertFailed:
         module.fail_json(msg="SSL Certificate Failed")
     except exceptions.ConnectionError:
-        module.fail_json(msg="COnnection Error")
+        module.fail_json(msg="Connection Error")
     except exceptions.UnsupportedVersion:
         module.fail_json(msg="Unsupported WSAPI version")
-    except:
-        module.fail_json(msg="Initializing client failed")
+    except Exception as e:
+        module.fail_json(msg="Initializing client failed. %s" % e)
 
-    if storage_system_username is None and storage_system_password is None:
+    if storage_system_username is None or storage_system_password is None:
         module.fail_json(msg="Storage system username or password is None")
     if cpg_name is None:
         module.fail_json(msg="CPG Name is None")

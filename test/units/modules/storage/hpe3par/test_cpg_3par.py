@@ -1,12 +1,8 @@
-# (C) Copyright 2018 Hewlett Packard Enterprise Development LP
+# Copyright: (c) 2018, Hewlett Packard Enterprise Development LP
 #
 # This program is free software; you can redistribute it and/or modify
-# it under the terms of version 3 of the GNU General Public License as
-# published by the Free Software Foundation.  Alternatively, at your
-# choice, you may also redistribute it and/or modify it under the terms
-# of the Apache License, version 2.0, available at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
+# it under the terms of version 3 or later of the GNU General Public License as
+# published by the Free Software Foundation.
 #
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -26,7 +22,7 @@ sys.modules['hpe3parclient'] = mock.Mock()
 sys.modules['hpe3parclient.exceptions'] = mock.Mock()
 from ansible.modules.storage.hpe3par import cpg_3par
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils import hpe3par
+from ansible.module_utils.storage.hpe3par import hpe3par
 
 
 @mock.patch('ansible.modules.storage.hpe3par.cpg_3par.client')
@@ -150,7 +146,7 @@ def test_main_exit_functionality_absent_success_without_issue_attr_dict(mock_del
 
 
 def test_convert_to_binary_multiple():
-    assert cpg_3par.convert_to_binary_multiple('-1.0') == -1
+    assert cpg_3par.convert_to_binary_multiple(None) == -1
     assert cpg_3par.convert_to_binary_multiple('-1.0 MiB') == -1
     assert cpg_3par.convert_to_binary_multiple('-1.0GiB') == -1
     assert cpg_3par.convert_to_binary_multiple('1.0   MiB') == 1

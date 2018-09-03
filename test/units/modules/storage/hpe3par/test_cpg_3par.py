@@ -146,13 +146,13 @@ def test_main_exit_functionality_absent_success_without_issue_attr_dict(mock_del
 
 
 def test_convert_to_binary_multiple():
-    assert cpg_3par.convert_to_binary_multiple(None) == -1
-    assert cpg_3par.convert_to_binary_multiple('-1.0 MiB') == -1
-    assert cpg_3par.convert_to_binary_multiple('-1.0GiB') == -1
-    assert cpg_3par.convert_to_binary_multiple('1.0   MiB') == 1
-    assert cpg_3par.convert_to_binary_multiple('1.5GiB') == 1.5 * 1024
-    assert cpg_3par.convert_to_binary_multiple('1.5 TiB') == 1.5 * 1024 * 1024
-    assert cpg_3par.convert_to_binary_multiple(' 1.5 TiB ') == 1.5 * 1024 * 1024
+    assert hpe3par.convert_to_binary_multiple(None) == -1
+    assert hpe3par.convert_to_binary_multiple('-1.0 MiB') == -1
+    assert hpe3par.convert_to_binary_multiple('-1.0GiB') == -1
+    assert hpe3par.convert_to_binary_multiple('1.0   MiB') == 1
+    assert hpe3par.convert_to_binary_multiple('1.5GiB') == 1.5 * 1024
+    assert hpe3par.convert_to_binary_multiple('1.5 TiB') == 1.5 * 1024 * 1024
+    assert hpe3par.convert_to_binary_multiple(' 1.5 TiB ') == 1.5 * 1024 * 1024
 
 
 @mock.patch('ansible.modules.storage.hpe3par.cpg_3par.client')

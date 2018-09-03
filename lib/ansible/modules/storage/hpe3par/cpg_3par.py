@@ -129,7 +129,6 @@ RETURN = r'''
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils import basic
 from ansible.module_utils.storage.hpe3par import hpe3par
 try:
     from hpe3par_sdk import client
@@ -137,25 +136,6 @@ try:
     HAS_3PARCLIENT = True
 except ImportError:
     HAS_3PARCLIENT = False
-
-
-def convert_to_binary_multiple(size_with_unit):
-    if size_with_unit is None:
-        return -1
-    valid_units = ['MiB', 'GiB', 'TiB']
-    valid_unit = False
-    for unit in valid_units:
-        if size_with_unit.strip().endswith(unit):
-            valid_unit = True
-            size = size_with_unit.split(unit)[0]
-            if float(size) < 0:
-                return -1
-    if not valid_unit:
-        raise ValueError("%s does not have a valid unit. The unit must be one of %s" % (size_with_unit, valid_units))
-
-    size = size_with_unit.replace(" ", "").split('iB')[0]
-    size_kib = basic.human_to_bytes(size)
-    return int(size_kib / (1024 * 1024))
 
 
 def validate_set_size(raid_type, set_size):
@@ -203,13 +183,13 @@ def create_cpg(
                 'diskPatterns': disk_patterns}
             ld_layout = cpg_ldlayout_map(ld_layout)
             if growth_increment is not None:
-                growth_increment = convert_to_binary_multiple(
+                growth_increment = hpe3par.convert_to_binary_multiple(
                     growth_increment)
             if growth_limit is not None:
-                growth_limit = convert_to_binary_multiple(
+                growth_limit = hpe3par.convert_to_binary_multiple(
                     growth_limit)
             if growth_warning is not None:
-                growth_warning = convert_to_binary_multiple(
+                growth_warning = hpe3par.convert_to_binary_multiple(
                     growth_warning)
             optional = {
                 'domain': domain,

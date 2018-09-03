@@ -35,7 +35,7 @@ options:
       required: true
 
 requirements:
-  - Ansible - 2.7
+  - Ansible - 2.8
   - hpe3par_sdk >= 1.0.2. Install using 'pip install hpe3par_sdk'
   - WSAPI service should be enabled on the 3PAR storage array.
 notes:

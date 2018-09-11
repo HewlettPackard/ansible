@@ -619,7 +619,7 @@ files:
     labels:
       - cloud
     support: community
-  $module_utils/hpe3par.py: &hpe3par
+  $module_utils/storage/hpe3par.py: &hpe3par
     maintainers: farhan7500 gautamphegde
     support: community
   lib/ansible/playbook/handler.py:

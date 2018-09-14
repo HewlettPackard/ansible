@@ -619,7 +619,7 @@ files:
     labels:
       - cloud
     support: community
-  $module_utils/storage/hpe3par.py: &hpe3par
+  $module_utils/storage/hpe3par/hpe3par.py: &hpe3par
     maintainers: farhan7500 gautamphegde
     support: community
   lib/ansible/playbook/handler.py:
@@ -1045,7 +1045,7 @@ files:
   lib/ansible/utils/module_docs_fragments/acme.py:
     support: community
     maintainers: resmo felixfontein
-  lib/ansible/utils/module_docs_fragments/hpe3par: *hpe3par
+  lib/ansible/utils/module_docs_fragments/hpe3par.py: *hpe3par
   test/sanity/validate-modules:
     notified:
       - mattclay

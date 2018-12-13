@@ -144,6 +144,10 @@ def cpg_ldlayout_map(ldlayout_dict):
             client.HPE3ParClient, ldlayout_dict['HA'])
     return ldlayout_dict
 
+def cpg_parameters_to_be_modified(optional, cpg_object):
+# need compare between parameters in optional and
+# cpg object properties
+    
 
 def create_cpg(
         client_obj,
@@ -155,40 +159,56 @@ def create_cpg(
         raid_type,
         set_size,
         high_availability,
-        disk_type):
+        disk_type,
+        new_name,
+        disable_auto_grow,
+        rm_growth_limit,
+        rm_warning_alert):
     try:
         if not validate_set_size(raid_type, set_size):
             return (False, False, "Set size %s not part of RAID set %s" % (set_size, raid_type))
+        if cpg_name in None:
+            return (False, False, "CPG name is null")
+        ld_layout = dict()
+        modify_only_param = dict()
+        disk_patterns = []
+        if disk_type:
+            disk_type = getattr(client.HPE3ParClient, disk_type)
+            disk_patterns = [{'diskType': disk_type}]
+        ld_layout = {
+            'RAIDType': raid_type,
+            'setSize': set_size,
+            'HA': high_availability,
+            'diskPatterns': disk_patterns}
+        modify_only_param = {
+            'newName': new_name,
+            'disableAutoGrow': disable_auto_grow,
+            'rmGrowthLimit': rm_growth_limit,
+            'rmWarningAlert': rm_warning_alert}
+        ld_layout = cpg_ldlayout_map(ld_layout)
+        if growth_increment is not None:
+            growth_increment = hpe3par.convert_to_binary_multiple(
+                growth_increment)
+        if growth_limit is not None:
+            growth_limit = hpe3par.convert_to_binary_multiple(
+                growth_limit)
+        if growth_warning is not None:
+            growth_warning = hpe3par.convert_to_binary_multiple(
+                growth_warning)
+        optional = {
+            'growthIncrementMiB': growth_increment,
+            'growthLimitMiB': growth_limit,
+            'usedLDWarningAlertMiB': growth_warning,
+            'LDLayout': ld_layout}
         if not client_obj.cpgExists(cpg_name):
-            ld_layout = dict()
-            disk_patterns = []
-            if disk_type:
-                disk_type = getattr(client.HPE3ParClient, disk_type)
-                disk_patterns = [{'diskType': disk_type}]
-            ld_layout = {
-                'RAIDType': raid_type,
-                'setSize': set_size,
-                'HA': high_availability,
-                'diskPatterns': disk_patterns}
-            ld_layout = cpg_ldlayout_map(ld_layout)
-            if growth_increment is not None:
-                growth_increment = hpe3par.convert_to_binary_multiple(
-                    growth_increment)
-            if growth_limit is not None:
-                growth_limit = hpe3par.convert_to_binary_multiple(
-                    growth_limit)
-            if growth_warning is not None:
-                growth_warning = hpe3par.convert_to_binary_multiple(
-                    growth_warning)
-            optional = {
-                'domain': domain,
-                'growthIncrementMiB': growth_increment,
-                'growthLimitMiB': growth_limit,
-                'usedLDWarningAlertMiB': growth_warning,
-                'LDLayout': ld_layout}
+            optional.update({'domain': domain})
             client_obj.createCPG(cpg_name, optional)
-        else:
-            return (True, False, "CPG already present")
+        else: 
+            optional.update(modify_only_param)
+            cpg_object = client_obj.getCPG(cpg_name)
+            cpg_parameters_to_be_modified(optional, cpg_object)
+            client_obj.modifyCPG(cpg_name, optional)
+            
     except exceptions.ClientException as e:
         return (False, False, "CPG creation failed | %s" % (e))
     return (True, True, "Created CPG %s successfully." % cpg_name)
@@ -228,6 +248,10 @@ def main():
     high_availability = module.params["high_availability"]
     disk_type = module.params["disk_type"]
     secure = module.params["secure"]
+    new_name = module.params["new_name"]
+    disable_auto_grow = module.params["disable_auto_grow"]
+    rm_growth_limit = module.params["rm_growth_limit"]
+    rm_warning_alert = module.params["rm_warning_alert"]
 
     wsapi_url = 'https://%s:8080/api/v1' % storage_system_ip
     try:
@@ -260,7 +284,11 @@ def main():
                 raid_type,
                 set_size,
                 high_availability,
-                disk_type
+                disk_type,
+                new_name,
+                disable_auto_grow,
+                rm_growth_limit,
+                rm_warning_alert
             )
         except Exception as e:
             module.fail_json(msg="CPG create failed | %s" % e)

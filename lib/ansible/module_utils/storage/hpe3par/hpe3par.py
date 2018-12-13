@@ -85,6 +85,21 @@ def cpg_argument_spec():
         "disk_type": {
             "type": "str",
             "choices": ['FC', 'NL', 'SSD']
+        },
+        "new_name": {
+            "type": "str",
+        },
+        "disable_auto_grow": {
+            "type": "bool",
+            "default": False
+        },
+        "rm_growth_limit": {
+            "type": "bool",
+            "default": False
+        },
+        "rm_warning_alert": {
+            "type": "bool",
+            "default": False
         }
     }
     spec.update(storage_system_spec)

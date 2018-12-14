@@ -144,10 +144,16 @@ def cpg_ldlayout_map(ldlayout_dict):
             client.HPE3ParClient, ldlayout_dict['HA'])
     return ldlayout_dict
 
-def cpg_parameters_to_be_modified(optional, cpg_object):
-# need compare between parameters in optional and
-# cpg object properties
-    
+def cpg_parameters_to_be_modified(optional):
+    modify_parameter_dict = dict()
+    if optional['growthIncrementMiB'] is not None and optional['growthIncrementMiB']:
+        modify_parameter_dict['growthIncrementMiB'] = optional['growthIncrementMiB'] 
+    if optional['growthLimitMiB'] is not None and optional['growthLimitMiB']:
+        modify_parameter_dict['growthLimitMiB'] = optional['growthLimitMiB']
+    if optional['usedLDWarningAlertMiB'] is not None and optional['usedLDWarningAlertMiB']:
+        modify_parameter_dict['usedLDWarningAlertMiB'] = optional['usedLDWarningAlertMiB']
+    modify_parameter_dict['LDLayout'] = optional['LDLayout']
+    return modify_parameter_dict
 
 def create_cpg(
         client_obj,
@@ -167,10 +173,10 @@ def create_cpg(
     try:
         if not validate_set_size(raid_type, set_size):
             return (False, False, "Set size %s not part of RAID set %s" % (set_size, raid_type))
-        if cpg_name in None:
-            return (False, False, "CPG name is null")
         ld_layout = dict()
         modify_only_param = dict()
+        cpg_object_dict = dict()
+        modify_param_dict = dict()
         disk_patterns = []
         if disk_type:
             disk_type = getattr(client.HPE3ParClient, disk_type)
@@ -204,10 +210,10 @@ def create_cpg(
             optional.update({'domain': domain})
             client_obj.createCPG(cpg_name, optional)
         else: 
-            optional.update(modify_only_param)
-            cpg_object = client_obj.getCPG(cpg_name)
-            cpg_parameters_to_be_modified(optional, cpg_object)
-            client_obj.modifyCPG(cpg_name, optional)
+            #cpg_object_dict = client_obj.getCPG(cpg_name)
+            modify_param_dict = cpg_parameters_to_be_modified(optional)
+            modify_param_dict.update(modify_only_param)
+            client_obj.modifyCPG(cpg_name, modify_param_dict)
             
     except exceptions.ClientException as e:
         return (False, False, "CPG creation failed | %s" % (e))

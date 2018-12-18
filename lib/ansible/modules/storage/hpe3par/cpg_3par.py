@@ -144,16 +144,6 @@ def cpg_ldlayout_map(ldlayout_dict):
             client.HPE3ParClient, ldlayout_dict['HA'])
     return ldlayout_dict
 
-def cpg_parameters_to_be_modified(optional):
-    modify_parameter_dict = dict()
-    if optional['growthIncrementMiB'] is not None and optional['growthIncrementMiB']:
-        modify_parameter_dict['growthIncrementMiB'] = optional['growthIncrementMiB'] 
-    if optional['growthLimitMiB'] is not None and optional['growthLimitMiB']:
-        modify_parameter_dict['growthLimitMiB'] = optional['growthLimitMiB']
-    if optional['usedLDWarningAlertMiB'] is not None and optional['usedLDWarningAlertMiB']:
-        modify_parameter_dict['usedLDWarningAlertMiB'] = optional['usedLDWarningAlertMiB']
-    modify_parameter_dict['LDLayout'] = optional['LDLayout']
-    return modify_parameter_dict
 
 def create_cpg(
         client_obj,
@@ -174,6 +164,7 @@ def create_cpg(
         if not validate_set_size(raid_type, set_size):
             return (False, False, "Set size %s not part of RAID set %s" % (set_size, raid_type))
         ld_layout = dict()
+        ld_layout_modify = dict()
         modify_only_param = dict()
         cpg_object_dict = dict()
         modify_param_dict = dict()
@@ -209,15 +200,60 @@ def create_cpg(
         if not client_obj.cpgExists(cpg_name):
             optional.update({'domain': domain})
             client_obj.createCPG(cpg_name, optional)
-        else: 
-            #cpg_object_dict = client_obj.getCPG(cpg_name)
-            modify_param_dict = cpg_parameters_to_be_modified(optional)
-            modify_param_dict.update(modify_only_param)
-            client_obj.modifyCPG(cpg_name, modify_param_dict)
+        else:
+            if domain is not None:
+                return (False, False, "CPG domain name can not be modified")
+            if new_name is not None and len(new_name) > 31:
+                return (False, False, "CPG new_name should not be more than 31 characters")
+            cpg_object = client_obj.getCPG(cpg_name)
+            optional.update(modify_only_param)
+
+            if optional['growthLimitMiB'] is not None and optional['rmGrowthLimit'] == True:
+                return (False, False, "rmGrowthLimit can't be set to true while setting growthLimitMiB")
+            if optional['growthIncrementMiB'] is not None and optional['disableAutoGrow'] == True:
+                return (False, False, "disableAutoGrow can't be set to true while setting growthIncrementMiB")
+            if optional['usedLDWarningAlertMiB'] is not None and optional['rmWarningAlert'] == True:
+                return (False, False, "rmWarningAlert can't be set to true while setting usedLDWarningAlertMiB")
+            #Creating a dictionary modify_parameter_dict by comparing the
+            #parameter values of optional dictionary with cpg_object elements.
+            #If entered parameter value is different from cpg_object elements
+            #then we are adding such parameters in modify_parameter_dict.
+            modify_parameter_dict = dict()
+            if optional['growthIncrementMiB'] is not None and optional['growthIncrementMiB']:
+                if optional['growthIncrementMiB'] != cpg_object.sdgrowth.increment_MiB:
+                    modify_parameter_dict['growthIncrementMiB'] = optional['growthIncrementMiB']
+            if optional['growthLimitMiB'] is not None and optional['growthLimitMiB']:
+                if optional['growthLimitMiB'] != cpg_object.sdgrowth.limit_MiB:
+                    modify_parameter_dict['growthLimitMiB'] = optional['growthLimitMiB']
+            if optional['usedLDWarningAlertMiB'] is not None and optional['usedLDWarningAlertMiB']:
+                if optional['usedLDWarningAlertMiB'] != cpg_object.sdgrowth.warning_MiB:
+                    modify_parameter_dict['usedLDWarningAlertMiB'] = optional['usedLDWarningAlertMiB']
+            if optional['LDLayout']['RAIDType'] != cpg_object.sdgrowth.ld_layout.raidtype:
+                ld_layout_modify['RAIDType'] = optional['LDLayout']['RAIDType']
+            if optional['LDLayout']['setSize'] != cpg_object.sdgrowth.ld_layout.set_size:
+                ld_layout_modify['setSize'] = optional['LDLayout']['setSize']
+            if optional['LDLayout']['HA'] != cpg_object.sdgrowth.ld_layout.ha:
+                ld_layout_modify['HA'] = optional['LDLayout']['HA']
+            if optional['LDLayout']['diskPatterns'][0]['diskType'] != cpg_object.sdgrowth.ld_layout.disk_patterns[0].disk_type:
+                ld_layout_modify['diskPatterns'] = optional['LDLayout']['diskPatterns']
+            if ld_layout_modify:
+                modify_parameter_dict['LDLayout'] = ld_layout_modify
+            if cpg_object.sdgrowth.limit_MiB and optional['rmGrowthLimit'] == True:
+                modify_parameter_dict['rmGrowthLimit'] = optional['rmGrowthLimit']
+            if cpg_object.sdgrowth.increment_MiB and optional['disableAutoGrow'] == True:
+                modify_parameter_dict['disableAutoGrow'] = optional['disableAutoGrow']
+            if cpg_object.sdgrowth.warning_MiB and optional['rmWarningAlert'] == True:
+                modify_parameter_dict['rmWarningAlert'] = optional['rmWarningAlert']
+            if optional['newName'] is not None:
+                modify_parameter_dict['newName'] = optional['newName']
+
+            if not modify_parameter_dict:
+                return (True, False, "CPG %s is already configured with entered parameters values" % cpg_name)
+            client_obj.modifyCPG(cpg_name, modify_parameter_dict)
             
     except exceptions.ClientException as e:
         return (False, False, "CPG creation failed | %s" % (e))
-    return (True, True, "Created CPG %s successfully." % cpg_name)
+    return (True, True, "CPG %s configuration is successful." % cpg_name)
 
 
 def delete_cpg(

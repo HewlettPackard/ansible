@@ -40,7 +40,11 @@ def test_module_args(mock_create_cpg, mock_module, mock_client):
         'high_availability': 'MAG',
         'disk_type': 'FC',
         'state': 'present',
-        'secure': False
+        'secure': False,
+        'new_name': 'xyz', 
+        'disable_auto_grow': False,
+        'rm_growth_limit': False,
+        'rm_warning_alert': False
     }
     mock_module.params = PARAMS_FOR_PRESENT
     mock_module.return_value = mock_module
@@ -76,7 +80,11 @@ def test_main_exit_functionality_present_success_without_issue_attr_dict(mock_cr
         'high_availability': 'MAG',
         'disk_type': 'FC',
         'state': 'present',
-        'secure': False
+        'secure': False,
+        'new_name': 'xyz', 
+        'disable_auto_grow': False,
+        'rm_growth_limit': False,
+        'rm_warning_alert': False
     }
     # This creates a instance of the AnsibleModule mock.
     mock_module.params = PARAMS_FOR_PRESENT
@@ -118,7 +126,11 @@ def test_main_exit_functionality_absent_success_without_issue_attr_dict(mock_del
         'high_availability': None,
         'disk_type': None,
         'state': 'absent',
-        'secure': False
+        'secure': False,
+        'new_name': 'xyz', 
+        'disable_auto_grow': False,
+        'rm_growth_limit': False,
+        'rm_warning_alert': False
     }
     # This creates a instance of the AnsibleModule mock.
     mock_module.params = PARAMS_FOR_DELETE
@@ -196,10 +208,59 @@ def test_create_cpg(mock_client):
                                'R6',
                                8,
                                'MAG',
-                               'FC'
-                               ) == (True, True, "Created CPG %s successfully." % 'test_cpg')
+                               'FC',
+                               None,
+                               False,
+                               False,
+                               False
+                               ) == (True, True, "CPG %s configuration is successful." % 'test_cpg')
 
     mock_client.HPE3ParClient.cpgExists.return_value = True
+    assert cpg_3par.create_cpg(mock_client.HPE3ParClient,
+                               'test_cpg',
+                               None,
+                               '32768.0 MiB',
+                               '32768.0 MiB',
+                               '32768.0 MiB',
+                               'R6',
+                               8,
+                               'MAG',
+                               'FC',
+                               None,
+                               True,
+                               False,
+                               False
+                               ) == (False, False, "disableAutoGrow can't be set to true while setting growthIncrementMiB")
+    assert cpg_3par.create_cpg(mock_client.HPE3ParClient,
+                               'test_cpg',
+                               None,
+                               '32768.0 MiB',
+                               '32768.0 MiB',
+                               '32768.0 MiB',
+                               'R6',
+                               8,
+                               'MAG',
+                               'FC',
+                               None,
+                               False,
+                               True,
+                               False
+                               ) == (False, False, "rmGrowthLimit can't be set to true while setting growthLimitMiB")
+    assert cpg_3par.create_cpg(mock_client.HPE3ParClient,
+                               'test_cpg',
+                               None,
+                               '32768.0 MiB',
+                               '32768.0 MiB',
+                               '32768.0 MiB',
+                               'R6',
+                               8,
+                               'MAG',
+                               'FC',
+                               None,
+                               False,
+                               False,
+                               True
+                               ) == (False, False, "rmWarningAlert can't be set to true while setting usedLDWarningAlertMiB")
     assert cpg_3par.create_cpg(mock_client.HPE3ParClient,
                                'test_cpg',
                                'test_domain',
@@ -209,21 +270,28 @@ def test_create_cpg(mock_client):
                                'R6',
                                8,
                                'MAG',
-                               'FC'
-                               ) == (True, False, 'CPG already present')
-
-    cpg_3par.validate_set_size = mock.Mock(return_value=False)
+                               'FC',
+                               None,
+                               False,
+                               False,
+                               False
+                               ) == (False, False, "CPG domain name can not be modified")
     assert cpg_3par.create_cpg(mock_client.HPE3ParClient,
                                'test_cpg',
-                               'test_domain',
+                               None,
                                '32768.0 MiB',
-                               '32768 MiB',
+                               '32768.0 MiB',
                                '32768.0 MiB',
                                'R6',
-                               3,
+                               8,
                                'MAG',
-                               'FC'
-                               ) == (False, False, 'Set size 3 not part of RAID set R6')
+                               'FC',
+                               'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+                               False,
+                               False,
+                               False
+                               ) == (False, False, "CPG new_name should not be more than 31 characters")
+
 
 
 @mock.patch('ansible.modules.storage.hpe3par.cpg_3par.client')

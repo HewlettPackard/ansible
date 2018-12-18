@@ -20,7 +20,7 @@ author:
   - Farhan Nomani (@farhan7500)
   - Gautham P Hegde (@gautamphegde)
 description:
-  - Create and delete CPG on HPE 3PAR.
+  - Create, modify and delete CPG on HPE 3PAR.
 module: cpg_3par
 options:
   cpg_name:
@@ -81,6 +81,24 @@ options:
       - Specifies whether certificate need to be validated while communicating
     type: bool
     default: no
+  new_name:
+    description:
+      - Specifies the name of the CPG to update.
+  disable_auto_grow:
+    description:
+      - Enables (false) or disables (true) CPG auto grow.
+    type: bool
+    default: false
+  rm_growth_limit:
+    description:
+      - Enables (false) or disables (true) auto grow limit enforcement.
+    type: bool
+    default: false
+  rm_warning_alert:
+    description:
+      - Enables (false) or disables (true) warning limit enforcement.
+    type: bool
+    default: false
 extends_documentation_fragment: hpe3par
 version_added: 2.8
 '''
@@ -103,6 +121,26 @@ EXAMPLES = r'''
         high_availability: MAG
         disk_type: FC
         secure: no
+
+    - name: Modify CPG sample_cpg
+      cpg_3par:
+        storage_system_ip: 10.10.10.1
+        storage_system_username: username
+        storage_system_password: password
+        state: present
+        cpg_name: sample_cpg
+        growth_increment: 36000 MiB
+        growth_limit: 65002 MiB
+        growth_warning: 45000 MiB
+        raid_type: R6
+        set_size: 8
+        high_availability: MAG
+        disk_type: FC
+        secure: no
+        new_name: new_sample_cpg
+        disable_auto_grow: false
+        rm_growth_limit: false
+        rm_warning_alert: false
 
     - name: Delete CPG sample_cpg
       cpg_3par:
@@ -252,7 +290,7 @@ def create_cpg(
             client_obj.modifyCPG(cpg_name, modify_parameter_dict)
             
     except exceptions.ClientException as e:
-        return (False, False, "CPG creation failed | %s" % (e))
+        return (False, False, "CPG configuration failed | %s" % (e))
     return (True, True, "CPG %s configuration is successful." % cpg_name)
 
 

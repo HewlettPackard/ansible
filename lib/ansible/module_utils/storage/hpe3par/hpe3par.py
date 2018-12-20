@@ -69,14 +69,11 @@ def cpg_argument_spec():
             "type": "str",
         },
         "raid_type": {
-            "required": False,
             "type": "str",
             "choices": ['R0', 'R1', 'R5', 'R6']
         },
         "set_size": {
-            "required": False,
-            "type": "int",
-            "default": -1
+            "type": "int"
         },
         "high_availability": {
             "type": "str",

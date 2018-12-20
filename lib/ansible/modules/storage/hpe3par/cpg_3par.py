@@ -66,7 +66,6 @@ options:
     description:
       - Specifies the RAID type for the logical disk.
   set_size:
-    default: -1
     description:
       - Specifies the set size in the number of chunklets.
   state:
@@ -165,14 +164,6 @@ except ImportError:
     HAS_3PARCLIENT = False
 
 
-def validate_set_size(raid_type, set_size):
-    if raid_type:
-        set_size_array = client.HPE3ParClient.RAID_MAP[raid_type]['set_sizes']
-        if set_size in set_size_array:
-            return True
-    return False
-
-
 def cpg_ldlayout_map(ldlayout_dict):
     if ldlayout_dict['RAIDType'] is not None and ldlayout_dict['RAIDType']:
         ldlayout_dict['RAIDType'] = client.HPE3ParClient.RAID_MAP[
@@ -199,8 +190,6 @@ def create_cpg(
         rm_growth_limit,
         rm_warning_alert):
     try:
-        if not validate_set_size(raid_type, set_size):
-            return (False, False, "Set size %s not part of RAID set %s" % (set_size, raid_type))
         ld_layout = dict()
         ld_layout_modify = dict()
         modify_only_param = dict()
@@ -267,14 +256,18 @@ def create_cpg(
             if optional['usedLDWarningAlertMiB'] is not None and optional['usedLDWarningAlertMiB']:
                 if optional['usedLDWarningAlertMiB'] != cpg_object.sdgrowth.warning_MiB:
                     modify_parameter_dict['usedLDWarningAlertMiB'] = optional['usedLDWarningAlertMiB']
-            if optional['LDLayout']['RAIDType'] != cpg_object.sdgrowth.ld_layout.raidtype:
-                ld_layout_modify['RAIDType'] = optional['LDLayout']['RAIDType']
-            if optional['LDLayout']['setSize'] != cpg_object.sdgrowth.ld_layout.set_size:
-                ld_layout_modify['setSize'] = optional['LDLayout']['setSize']
-            if optional['LDLayout']['HA'] != cpg_object.sdgrowth.ld_layout.ha:
-                ld_layout_modify['HA'] = optional['LDLayout']['HA']
-            if optional['LDLayout']['diskPatterns'][0]['diskType'] != cpg_object.sdgrowth.ld_layout.disk_patterns[0].disk_type:
-                ld_layout_modify['diskPatterns'] = optional['LDLayout']['diskPatterns']
+            if raid_type is not None:
+                if optional['LDLayout']['RAIDType'] != cpg_object.sdgrowth.ld_layout.raidtype:
+                    ld_layout_modify['RAIDType'] = optional['LDLayout']['RAIDType']
+            if set_size is not None:
+                if optional['LDLayout']['setSize'] != cpg_object.sdgrowth.ld_layout.set_size:
+                    ld_layout_modify['setSize'] = optional['LDLayout']['setSize']
+            if high_availability is not None:
+                if optional['LDLayout']['HA'] != cpg_object.sdgrowth.ld_layout.ha:
+                    ld_layout_modify['HA'] = optional['LDLayout']['HA']
+            if disk_type is not None:
+                if optional['LDLayout']['diskPatterns'][0]['diskType'] != cpg_object.sdgrowth.ld_layout.disk_patterns[0].disk_type:
+                    ld_layout_modify['diskPatterns'] = optional['LDLayout']['diskPatterns']
             if ld_layout_modify:
                 modify_parameter_dict['LDLayout'] = ld_layout_modify
             if cpg_object.sdgrowth.limit_MiB and optional['rmGrowthLimit'] == True:
@@ -372,7 +365,7 @@ def main():
                 rm_warning_alert
             )
         except Exception as e:
-            module.fail_json(msg="CPG create failed | %s" % e)
+            module.fail_json(msg="CPG configuration failed | %s" % e)
         finally:
             client_obj.logout()
 
@@ -384,7 +377,7 @@ def main():
                 cpg_name
             )
         except Exception as e:
-            module.fail_json(msg="CPG create failed | %s" % e)
+            module.fail_json(msg="CPG delete failed | %s" % e)
         finally:
             client_obj.logout()
 

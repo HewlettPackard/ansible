@@ -206,20 +206,21 @@ def create_cpg(
         modify_only_param = dict()
         cpg_object_dict = dict()
         modify_param_dict = dict()
-        disk_patterns = []
+        optional = dict()
+        disk_patterns = list()
         if disk_type:
             disk_type = getattr(client.HPE3ParClient, disk_type)
-            disk_patterns = [{'diskType': disk_type}]
-        ld_layout = {
+            disk_patterns.append({'diskType': disk_type})
+        ld_layout.update({
             'RAIDType': raid_type,
             'setSize': set_size,
             'HA': high_availability,
-            'diskPatterns': disk_patterns}
-        modify_only_param = {
+            'diskPatterns': disk_patterns})
+        modify_only_param.update({
             'newName': new_name,
             'disableAutoGrow': disable_auto_grow,
             'rmGrowthLimit': rm_growth_limit,
-            'rmWarningAlert': rm_warning_alert}
+            'rmWarningAlert': rm_warning_alert})
         ld_layout = cpg_ldlayout_map(ld_layout)
         if growth_increment is not None:
             growth_increment = hpe3par.convert_to_binary_multiple(
@@ -230,11 +231,11 @@ def create_cpg(
         if growth_warning is not None:
             growth_warning = hpe3par.convert_to_binary_multiple(
                 growth_warning)
-        optional = {
+        optional.update({
             'growthIncrementMiB': growth_increment,
             'growthLimitMiB': growth_limit,
             'usedLDWarningAlertMiB': growth_warning,
-            'LDLayout': ld_layout}
+            'LDLayout': ld_layout})
         if not client_obj.cpgExists(cpg_name):
             optional.update({'domain': domain})
             client_obj.createCPG(cpg_name, optional)

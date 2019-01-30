@@ -261,9 +261,9 @@ secret less than 12 characters or more than 16 characters"
                 )
         client_obj.modifyHost(host_name,
                               {'chapOperationMode':
-                               HPE3ParClient.CHAP_INITIATOR,
+                               client.HPE3ParClient.CHAP_INITIATOR,
                                'chapOperation':
-                               HPE3ParClient.HOST_EDIT_ADD,
+                               client.HPE3ParClient.HOST_EDIT_ADD,
                                'chapName': chap_name,
                                'chapSecret': chap_secret,
                                'chapSecretHex': chap_secret_hex})
@@ -280,7 +280,7 @@ def remove_initiator_chap(
     try:
         client_obj.modifyHost(
             host_name, {
-                'chapOperation': HPE3ParClient.HOST_EDIT_REMOVE})
+                'chapOperation': client.HPE3ParClient.HOST_EDIT_REMOVE})
     except exceptions.ClientException as e:
         return (False, False, "Remove initiator chap failed | %s" % (e))
     finally:
@@ -333,13 +333,10 @@ chap_secret_hex is false'
     try:
         if initiator_chap_exists(
                 client_obj,
-                storage_system_username,
-                storage_system_password,
                 host_name):
-            client_obj.login(storage_system_username, storage_system_password)
             mod_request = {
-                'chapOperationMode': HPE3ParClient.CHAP_TARGET,
-                'chapOperation': HPE3ParClient.HOST_EDIT_ADD,
+                'chapOperationMode': client.HPE3ParClient.CHAP_TARGET,
+                'chapOperation': client.HPE3ParClient.HOST_EDIT_ADD,
                 'chapName': chap_name,
                 'chapSecret': chap_secret,
                 'chapSecretHex': chap_secret_hex}
@@ -358,7 +355,7 @@ def remove_target_chap(
         host_name):
     try:
         mod_request = {
-            'chapOperation': HPE3ParClient.HOST_EDIT_REMOVE,
+            'chapOperation': client.HPE3ParClient.HOST_EDIT_REMOVE,
             'chapRemoveTargetOnly': True}
         client_obj.modifyHost(host_name, mod_request)
     except exceptions.ClientException as e:
@@ -379,9 +376,8 @@ def add_fc_path_to_host(
             "Host modification failed. host_fc_wwns is null"
             )
     try:
-        client_obj.login(storage_system_username, storage_system_password)
         mod_request = {
-            'pathOperation': HPE3ParClient.HOST_EDIT_ADD,
+            'pathOperation': client.HPE3ParClient.HOST_EDIT_ADD,
             'FCWWNs': host_fc_wwns}
         client_obj.modifyHost(host_name, mod_request)
     except exceptions.ClientException as e:
@@ -404,7 +400,7 @@ def remove_fc_path_from_host(
             )
     try:
         mod_request = {
-            'pathOperation': HPE3ParClient.HOST_EDIT_REMOVE,
+            'pathOperation': client.HPE3ParClient.HOST_EDIT_REMOVE,
             'FCWWNs': host_fc_wwns,
             'forcePathRemoval': force_path_removal}
         client_obj.modifyHost(host_name, mod_request)
@@ -427,7 +423,7 @@ def add_iscsi_path_to_host(
             )
     try:
         mod_request = {
-            'pathOperation': HPE3ParClient.HOST_EDIT_ADD,
+            'pathOperation': client.HPE3ParClient.HOST_EDIT_ADD,
             'iSCSINames': host_iscsi_names}
         client_obj.modifyHost(host_name, mod_request)
     except exceptions.ClientException as e:
@@ -450,7 +446,7 @@ def remove_iscsi_path_from_host(
             )
     try:
         mod_request = {
-            'pathOperation': HPE3ParClient.HOST_EDIT_REMOVE,
+            'pathOperation': client.HPE3ParClient.HOST_EDIT_REMOVE,
             'iSCSINames': host_iscsi_names,
             'forcePathRemoval': force_path_removal}
         client_obj.modifyHost(host_name, mod_request)

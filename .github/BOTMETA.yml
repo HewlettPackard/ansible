@@ -789,7 +789,6 @@ files:
 
 ###############################
 # playbook
-
   lib/ansible/playbook/handler.py:
     keywords:
       - handlers
@@ -1344,10 +1343,7 @@ files:
     maintainers: $team_nxos
     labels:
       - networking
-<<<<<<< HEAD
   test/units/modules/cloud/xenserver/: bvitnik
-=======
->>>>>>> Added storage modules and unit tests
   test/units/modules/storage/hpe3par: *hpe3par
   test/sanity/pep8/legacy-files.txt:
     notified: mattclay

@@ -1319,7 +1319,6 @@ files:
     maintainers: $team_nxos
     labels:
       - networking
-
   test/units/modules/source_control/test_gitlab_: *gitlab
   test/units/modules/storage/hpe3par: *hpe3par
   test/sanity/pep8/legacy-files.txt:

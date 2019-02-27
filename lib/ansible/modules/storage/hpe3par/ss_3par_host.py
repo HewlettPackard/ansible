@@ -19,13 +19,13 @@ short_description: Manage HPE StoreServ 3PAR HOST
 author:
   - Farhan Nomani (@farhan7500)
 description:
- - On HPE 3PAR  Create and Delete Host. 
+ - On HPE 3PAR  Create and Delete Host.
  - Add Initiator Chap.
- - Remove Initiator Chap. 
- - Add Target Chap. 
+ - Remove Initiator Chap.
+ - Add Target Chap.
  - Remove Target Chap.
- - Add FC Path to Host 
- - Remove FC Path from Host 
+ - Add FC Path to Host
+ - Remove FC Path from Host
  - Add ISCSI Path to Host
  - Remove ISCSI Path from Host
 module: ss_3par_host
@@ -34,38 +34,31 @@ options:
     description:
       - The chap name. Required with actions add_initiator_chap,
        add_target_chap.
-    required: false
   chap_secret:
     description:
       - The chap secret for the host or the target Required with actions
        add_initiator_chap, add_target_chap.
-    required: false
   chap_secret_hex:
     description:
       - If true, then chapSecret is treated as Hex.
-    required: false
     type: bool
   force_path_removal:
     description:
       - If true, remove WWN(s) or iSCSI(s) even if there are VLUNs that are
        exported to the host.
-    required: false
     type: bool
   host_domain:
     description:
       - Create the host in the specified domain, or in the default domain,
        if unspecified.
-    required: false
   host_fc_wwns:
     description:
       - Set one or more WWNs for the host. Required with action
        add_fc_path_to_host, remove_fc_path_from_host.
-    required: false
   host_iscsi_names:
     description:
       - Set one or more iSCSI names for the host. Required with action
        add_iscsi_path_to_host, remove_iscsi_path_from_host.
-    required: false
   host_name:
     description:
       - Name of the Host.
@@ -90,7 +83,6 @@ options:
     description:
       - ID of the persona to assign to the host. Uses the default persona
        unless you specify the host persona.
-    required: false
   state:
     choices:
       - present
@@ -108,42 +100,41 @@ options:
       - Whether the specified Host should exist or not. State also provides
        actions to add and remove initiator and target chap, add fc/iscsi path
        to host.
-    required: true
   secure:
     description:
       - Specifies whether the certificate needs to be validated while communicating.
     type: bool
     default: no
 extends_documentation_fragment: hpe3par
-version_added: 2.8
+version_added: "2.8"
 '''
 
 
 EXAMPLES = r'''
-    - name: Create Host "{{ host_name }}"
+    - name: Create Host test_host
       hpe3par_host:
-        storage_system_ip="{{ storage_system_ip }}"
-        storage_system_username="{{ storage_system_username }}"
-        storage_system_password="{{ storage_system_password }}"
-        state=present
-        host_name="{{ host_name }}"
+        storage_system_ip: 10.10.10.1
+        storage_system_username: username
+        storage_system_password: password
+        state: present
+        host_name: test_host
 
-    - name: Modify Host "{{ host_name }}"
+    - name: Modify Host test_host
       hpe3par_host:
-        storage_system_ip="{{ storage_system_ip }}"
-        storage_system_username="{{ storage_system_username }}"
-        storage_system_password="{{ storage_system_password }}"
-        state=modify
-        host_name="{{ host_name }}"
-        host_new_name="{{ host_new_name }}"
+        storage_system_ip: 10.10.10.1
+        storage_system_username: username
+        storage_system_password: password
+        state: modify
+        host_name: test_host
+        host_new_name: new_test_host
 
-    - name: Delete Host "{{ new_name }}"
+    - name: Delete Host test_host
       hpe3par_host:
-        storage_system_ip="{{ storage_system_ip }}"
-        storage_system_username="{{ storage_system_username }}"
-        storage_system_password="{{ storage_system_password }}"
-        state=absent
-        host_name="{{ host_new_name }}"
+        storage_system_ip: 10.10.10.1
+        storage_system_username: username
+        storage_system_password: password
+        state: absent
+        host_name: test_host
 '''
 
 RETURN = r'''
@@ -187,7 +178,7 @@ def create_host(
         return (False, False, "Host creation failed | %s" % (e))
     finally:
         client_obj.logout()
-    return (True, True, "Created host %s successfully." % host_name )
+    return (True, True, "Created host %s successfully." % host_name)
 
 
 def modify_host(
@@ -207,7 +198,7 @@ def modify_host(
         return (False, False, "Host modification failed | %s" % (e))
     finally:
         client_obj.logout()
-    return (True, True, "Modified host %s successfully." % host_name )
+    return (True, True, "Modified host %s successfully." % host_name)
 
 
 def delete_host(
@@ -222,7 +213,7 @@ def delete_host(
         return (False, False, "Host deletion failed | %s" % (e))
     finally:
         client_obj.logout()
-    return (True, True, "Deleted host %s successfully." % host_name )
+    return (True, True, "Deleted host %s successfully." % host_name)
 
 
 def add_initiator_chap(
@@ -236,13 +227,13 @@ def add_initiator_chap(
             False,
             False,
             "Host modification failed. Chap name is null"
-            )
+        )
     if chap_secret is None:
         return (
             False,
             False,
             "Host modification failed. chap_secret is null"
-            )
+        )
     try:
         if chap_secret_hex and len(chap_secret) != 32:
             return (
@@ -250,7 +241,7 @@ def add_initiator_chap(
                 False,
                 "Add initiator chap failed. Chap secret hex is false and chap \
 secret less than 32 characters"
-                )
+            )
         if not chap_secret_hex and (
                 len(chap_secret) < 12 or len(chap_secret) > 16):
             return (
@@ -258,7 +249,7 @@ secret less than 32 characters"
                 False,
                 "Add initiator chap failed. Chap secret hex is false and chap \
 secret less than 12 characters or more than 16 characters"
-                )
+            )
         client_obj.modifyHost(host_name,
                               {'chapOperationMode':
                                client.HPE3ParClient.CHAP_INITIATOR,
@@ -308,20 +299,20 @@ def add_target_chap(
             False,
             False,
             "Host modification failed. Chap name is null"
-            )
+        )
     if chap_secret is None:
         return (
             False,
             False,
             "Host modification failed. chap_secret is null"
-            )
+        )
     if chap_secret_hex and len(chap_secret) != 32:
         return (
             False,
             False,
             'Attribute chap_secret must be 32 hexadecimal characters if \
 chap_secret_hex is true'
-            )
+        )
     if not chap_secret_hex and (
             len(chap_secret) < 12 or len(chap_secret) > 16):
         return (
@@ -329,7 +320,7 @@ chap_secret_hex is true'
             False,
             'Attribute chap_secret must be 12 to 16 character if \
 chap_secret_hex is false'
-            )
+        )
     try:
         if initiator_chap_exists(
                 client_obj,
@@ -374,7 +365,7 @@ def add_fc_path_to_host(
             False,
             False,
             "Host modification failed. host_fc_wwns is null"
-            )
+        )
     try:
         mod_request = {
             'pathOperation': client.HPE3ParClient.HOST_EDIT_ADD,
@@ -397,7 +388,7 @@ def remove_fc_path_from_host(
             False,
             False,
             "Host modification failed. host_fc_wwns is null"
-            )
+        )
     try:
         mod_request = {
             'pathOperation': client.HPE3ParClient.HOST_EDIT_REMOVE,
@@ -420,7 +411,7 @@ def add_iscsi_path_to_host(
             False,
             False,
             "Host modification failed. host_iscsi_names is null"
-            )
+        )
     try:
         mod_request = {
             'pathOperation': client.HPE3ParClient.HOST_EDIT_ADD,
@@ -443,7 +434,7 @@ def remove_iscsi_path_from_host(
             False,
             False,
             "Host modification failed. host_iscsi_names is null"
-            )
+        )
     try:
         mod_request = {
             'pathOperation': client.HPE3ParClient.HOST_EDIT_REMOVE,
@@ -456,7 +447,7 @@ def remove_iscsi_path_from_host(
             False,
             "Remove ISCSI path from host failed | %s" %
             (e)
-            )
+        )
     finally:
         client_obj.logout()
     return (True, True, "Removed ISCSI path from host successfully.")
@@ -625,7 +616,7 @@ def main():
         except Exception as e:
             module.fail_json(msg="Remove FC path to host failed | %s" % e)
         finally:
-            client_obj.logout()            
+            client_obj.logout()
 
     elif module.params["state"] == "add_iscsi_path_to_host":
         try:
@@ -638,7 +629,7 @@ def main():
         except Exception as e:
             module.fail_json(msg="Add iscsi path to host failed | %s" % e)
         finally:
-            client_obj.logout() 
+            client_obj.logout()
 
     elif module.params["state"] == "remove_iscsi_path_from_host":
         try:

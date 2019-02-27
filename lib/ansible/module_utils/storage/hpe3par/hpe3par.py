@@ -143,4 +143,3 @@ def host_argument_spec():
     }
     spec.update(storage_system_spec)
     return spec
-
